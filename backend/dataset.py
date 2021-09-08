@@ -12,10 +12,5 @@ def get_dataset_collection(name: str) -> DatasetCollection:
     return DatasetCollection.get_by_name(name)
 
 
-def list_data(dc: DatasetCollection, phase: MachineLearningPhase):
-    if dc.dataset_type == DatasetType.Vision:
-        dataset_util = dc.get_dataset_util(phase)
-        for i in range(len(dataset_util)):
-            yield (dataset_util.get_sample_image(i), dataset_util.get_sample_label(i))
-        return
-    raise RuntimeError("Unimplemented Code")
+def get_raw_data_from_dataset(dc: DatasetCollection, phase: MachineLearningPhase):
+    return dc.generate_raw_data(phase)
