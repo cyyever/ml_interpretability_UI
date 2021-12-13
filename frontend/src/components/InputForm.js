@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import InputModal from './InputModal';
 //dataset example data
 const datasets = [
     {
@@ -25,10 +25,13 @@ const datasets = [
 
 
 class InputForm extends Component {
-    state = {
-        datasets : datasets,
-        selectedDataset: datasets[0],
 
+    constructor(){
+        super();
+        this.state={
+            datasets : datasets,
+            selectedDataset: datasets[0],
+        }
     }
 
   /*  
@@ -54,11 +57,11 @@ class InputForm extends Component {
 
                         <div>
                        <label className = "col-form-label pe-2">Dataset : </label>
-                        <select className = "form-select-sm px-4" value = {this.state.selectedDataset.id} onChange = {this.handleDatasetInput}>
+                        <select className = "form-select-sm px-3" value = {this.state.selectedDataset.id} onChange = {this.handleDatasetInput}>
                        {this.state.datasets.map(dataset =>(<option key = {dataset.id} value = {dataset.id}>{dataset.name}</option>))}
                         </select>
+                        <InputModal/>
                         </div>
-
                         <div>
                         <label className = "col-form-label pe-2" >Label : </label>
                         <span>{this.state.selectedDataset.label}</span>
@@ -72,6 +75,7 @@ class InputForm extends Component {
 
     
                 </form> 
+               
             </div>
         )
     }
