@@ -1,7 +1,7 @@
 import typing
 
 from cyy_torch_toolbox.dataset_collection import DatasetCollection
-from cyy_torch_toolbox.ml_type import DatasetType, MachineLearningPhase
+from cyy_torch_toolbox.ml_type import MachineLearningPhase
 
 
 def get_supported_dataset_names() -> typing.Sequence[str]:
