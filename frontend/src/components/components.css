@@ -17,6 +17,9 @@
     cursor: pointer;
  }
 
+ .table-hover tr:hover{
+  cursor: pointer;
+ }
  .caret {
     display: inline-block;
     width: 0;

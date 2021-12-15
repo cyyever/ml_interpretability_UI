@@ -99,6 +99,14 @@ const options = {
   sizePerPageList: [8]
 };
 
+
+const selectRow = {
+    mode: 'radio',
+    hideSelectColumn: true,
+    clickToSelect: true,
+    bgColor : '#00BFFF',
+
+};
  class OutputTable extends Component {
 
     constructor(){
@@ -130,6 +138,7 @@ const options = {
         onClick : (e , row , rowIndex) => {
             this.setState({selectedLabel : row} , () => {
                 console.log(this.state.selectedLabel)
+        
             })
         }
     };
@@ -140,7 +149,7 @@ const options = {
             <div className='row ps-2'>
                 <div className = 'col-9'>
                 <BootstrapTable hover condensed={true} keyField='id' data={data} columns={this.columns}  rowEvents = {this.rowEvents } 
-                pagination={ paginationFactory(options) }/>
+                pagination={ paginationFactory(options) } selectRow = {selectRow}/>
                 </div>
                 <div className = 'col-3 center'>
                 <img src = {this.state.selectedLabel.images}/>
