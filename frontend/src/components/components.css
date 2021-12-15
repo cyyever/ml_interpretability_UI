@@ -35,3 +35,14 @@
     border-bottom: 4px solid \9;
     content: "";
   }
+
+  
+  .react-bootstrap-table-page-btns-ul{
+    float:right;
+  }
+
+  .center {
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+  }

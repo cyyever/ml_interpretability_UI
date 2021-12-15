@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import images from '../assets'
 import BootstrapTable from 'react-bootstrap-table-next'
+import paginationFactory from 'react-bootstrap-table2-paginator';
+
 const data = [
     {
         id:1,
@@ -74,9 +76,28 @@ const data = [
     },
  ]
 
+ const customTotal = (from, to, size) => (
+    <span className="react-bootstrap-table-pagination-total">
+      Showing { from } to { to } of { size } Results
+    </span>
+  );
 
-
-
+const options = {
+  paginationSize: 4,
+  pageStartIndex: 0,
+  firstPageText: 'First',
+  prePageText: 'Back',
+  nextPageText: 'Next',
+  lastPageText: 'Last',
+  nextPageTitle: 'First page',
+  prePageTitle: 'Pre page',
+  firstPageTitle: 'Next page',
+  lastPageTitle: 'Last page',
+  showTotal: true,
+  paginationTotalRenderer: customTotal,
+  disablePageTitle: true,
+  sizePerPageList: [8]
+};
 
  class OutputTable extends Component {
 
@@ -116,11 +137,12 @@ const data = [
 
     render() {
         return (
-            <div className='row'>
-                <div className = 'col-10'>
-                <BootstrapTable className='test' hover condensed={true} keyField='id' data={data} columns={this.columns}  rowEvents = {this.rowEvents }/>
+            <div className='row ps-2'>
+                <div className = 'col-9'>
+                <BootstrapTable hover condensed={true} keyField='id' data={data} columns={this.columns}  rowEvents = {this.rowEvents } 
+                pagination={ paginationFactory(options) }/>
                 </div>
-                <div className = 'col-2' align="center" >
+                <div className = 'col-3 center'>
                 <img src = {this.state.selectedLabel.images}/>
                 </div>
             </div>
