@@ -12,5 +12,7 @@ def get_dataset_collection(name: str) -> DatasetCollection:
     return DatasetCollection.get_by_name(name)
 
 
-def get_raw_data_from_dataset(dc: DatasetCollection, phase: MachineLearningPhase):
+def get_raw_data_from_dataset(
+    dc: DatasetCollection, phase: MachineLearningPhase
+) -> typing.Sequence[tuple]:
     return dc.generate_raw_data(phase)
