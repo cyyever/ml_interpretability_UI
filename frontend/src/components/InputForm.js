@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import InputModal from './InputModal';
+import { getDatasetName } from '../assets/api-client.js'
 //dataset example data
+/*
 const datasets = [
     {
         id: 1,
@@ -21,7 +23,7 @@ const datasets = [
         uploadDate: '3/12/2021'
     },
 ]
-
+*/
 
 
 class InputForm extends Component {
@@ -29,8 +31,8 @@ class InputForm extends Component {
     constructor(){
         super();
         this.state={
-            datasets : datasets,
-            selectedDataset: datasets[0],
+            datasets : [],
+            selectedDataset: "",
         }
     }
 
@@ -43,13 +45,20 @@ class InputForm extends Component {
  }
  */
 
+    componentDidMount(){
+        getDatasetName()
+        .then((data) => {
+            this.setState({datasets : data.datasetName , selectedDataset: data.datasetName[0]})
+            })
+    }
 
- handleDatasetInput = event =>{
-    var data = datasets.find(dataset => dataset.id === parseInt(event.target.value))
-    this.setState({selectedDataset : data});
+    handleDatasetInput = event =>{
+        var data = this.state.datasets.find(dataset => dataset.id === parseInt(event.target.value))
+        this.setState({selectedDataset : data});
 
- }
+    }
     render() {
+
         return (
             <div className='px-2'>
                <form>
@@ -57,19 +66,20 @@ class InputForm extends Component {
 
                         <div>
                        <label className = "col-form-label pe-2">Dataset : </label>
-                        <select className = "form-select-sm px-3" value = {this.state.selectedDataset.id} onChange = {this.handleDatasetInput}>
-                       {this.state.datasets.map(dataset =>(<option key = {dataset.id} value = {dataset.id}>{dataset.name}</option>))}
+                        <select className = "form-select-sm px-3" value = {this.state.selectedDataset} onChange = {this.handleDatasetInput}>
+                        {this.state.datasets.map(dataset =>(<option key = {dataset} value = {dataset}>{dataset}</option>))} 
                         </select>
+                      
                         <InputModal/>
                         </div>
                         <div>
                         <label className = "col-form-label pe-2" >Label : </label>
-                        <span>{this.state.selectedDataset.label}</span>
+                        <span>{/*this.state.selectedDataset.label*/}</span>
                         </div>
 
                         <div>
                         <label className = "col-form-label pe-2"> Upload Date : </label>
-                        <span>{this.state.selectedDataset.uploadDate}</span>
+                        <span>{/*this.state.selectedDataset.uploadDate*/}</span>
                         </div>
                     </div>
 
