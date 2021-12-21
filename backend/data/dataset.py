@@ -18,7 +18,7 @@ class dataset:
     def get_raw_data_from_dataset(
         dc: DatasetCollection, phase: MachineLearningPhase, index: int
     ) -> tuple:
-        return dc.get_raw_data_from_dataset(phase, index)
+        return dc.get_raw_data(phase, index)
 
     # def get_dataset_size(dc: DatasetCollection, phase: MachineLearningPhase):
     #     return len(dc.get_dataset(phase))
@@ -27,3 +27,11 @@ class dataset:
     #     dc: DatasetCollection, phase: MachineLearningPhase
     # ) -> typing.Sequence[tuple]:
     #     return dc.generate_raw_data(phase)
+
+
+'''test code'''
+#if __name__ == "__main__":
+#    label =dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10") , MachineLearningPhase.Training)
+#    print(label.keys())
+#    print(label.get(9))
+#    print(list(dataset.get_raw_data_from_dataset(dataset.get_dataset_collection("CIFAR10") , MachineLearningPhase.Training , 46713)))
