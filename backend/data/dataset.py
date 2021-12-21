@@ -29,9 +29,11 @@ class dataset:
     #     return dc.generate_raw_data(phase)
 
 
-'''test code'''
-#if __name__ == "__main__":
-#    label =dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10") , MachineLearningPhase.Training)
-#    print(label.keys())
-#    print(label.get(9))
-#    print(list(dataset.get_raw_data_from_dataset(dataset.get_dataset_collection("CIFAR10") , MachineLearningPhase.Training , 46713)))
+if __name__ == "__main__":
+    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
+    indexes = dataset_.get("9")
+    return_data = []
+    for x in list(indexes):
+        result = list(dataset.get_raw_data_from_dataset(dataset.get_dataset_collection("CIFAR10") , 1, x))
+        return_data.append(result)
+   
