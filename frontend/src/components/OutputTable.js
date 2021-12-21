@@ -76,7 +76,7 @@ const selectRow = {
                 pagination={ paginationFactory(options) } selectRow = {selectRow}/>
                 </div>
                 <div className = 'col-3 center'>
-                <img src = {this.state.selectedLabel ? "data:image/png;base64,"+this.state.selectedLabel.img : ""} alt = {this.state.selectedLabel.label}/>
+                <img src = {this.state.selectedLabel ? "data:image/png;base64,"+this.state.selectedLabel.img : ""} alt = {this.state.selectedLabel.label} width="200" height = "200"/>
                 </div>
             </div>
         )

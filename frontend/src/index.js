@@ -3,20 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {createStore} from 'redux'
 
-//STORE -> GLOBALIZED STATE
-let store = createStore()
-//ACTION
-const setDatasetId = () =>{
-  return {
-    type: 'SetDatasetId'
-  }
-}
 
-//REDUCER
-
-//DISPATCH
 ReactDOM.render(
   <React.StrictMode>
     <App />
