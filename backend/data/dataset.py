@@ -13,7 +13,7 @@ class dataset:
 
     def get_label_indices(dc: DatasetCollection, phase: MachineLearningPhase) -> dict:
         labels = dc.get_dataset_util(phase=phase).split_by_label()
-        return {k: v["indices"] for k, v in labels.items()}
+        return {str(k): v["indices"] for k, v in labels.items()}
 
     def get_raw_data_from_dataset(
         dc: DatasetCollection, phase: MachineLearningPhase, index: int
