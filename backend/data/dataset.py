@@ -11,15 +11,19 @@ class dataset:
     def get_dataset_collection(name: str) -> DatasetCollection:
         return DatasetCollection.get_by_name(name)
 
-    def get_dataset_size(dc: DatasetCollection, phase: MachineLearningPhase):
-        return len(dc.get_dataset(phase))
-
-    def generate_raw_data_from_dataset(
-        dc: DatasetCollection, phase: MachineLearningPhase
-    ) -> typing.Sequence[tuple]:
-        return dc.generate_raw_data(phase)
+    def get_label_indices(dc: DatasetCollection, phase: MachineLearningPhase) -> dict:
+        labels = dc.get_dataset_util(phase=phase).split_by_label()
+        return {k: v["indices"] for k, v in labels.items()}
 
     def get_raw_data_from_dataset(
         dc: DatasetCollection, phase: MachineLearningPhase, index: int
     ) -> tuple:
         return dc.get_raw_data_from_dataset(phase, index)
+
+    # def get_dataset_size(dc: DatasetCollection, phase: MachineLearningPhase):
+    #     return len(dc.get_dataset(phase))
+
+    # def generate_raw_data_from_dataset(
+    #     dc: DatasetCollection, phase: MachineLearningPhase
+    # ) -> typing.Sequence[tuple]:
+    #     return dc.generate_raw_data(phase)
