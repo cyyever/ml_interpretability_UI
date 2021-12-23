@@ -1,32 +1,35 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'font-awesome/css/font-awesome.min.css';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
-
-import {Container , Row} from 'react-bootstrap'
+import React from 'react';
+import NavBar from './components/NavBar/NavBar';
+import OutputPanel from './components/ViewDataset/OutputPanel'
 import InputPanel from './components/InputPanel';
-import OutputPanel from './components/OutputPanel';
-import React, { useState } from 'react';
-
+import {BrowserRouter as Router , Routes , Route} from 'react-router-dom'
+import {Navbar} from 'react-bootstrap'
 function App() {
 
-  const[datasetId , setDataId] = useState(0);
-
-  function updateDatasetId(datasetId){
-    setDataId(datasetId);
-  }
 
   return (
     <div className="App">
-      <Container fluid className = "h-100">
-        <Row className="h-100">
-          <InputPanel updateDatasetId = {updateDatasetId}/>
-          <OutputPanel/>
-        </Row>
-      </Container>
+    <Navbar bg="light" fixed="top">
+       <div className = "container-fluid">
+    <Navbar.Brand>Brand text</Navbar.Brand>
+    </div>
+  </Navbar>
 
-      
+      <div className = "container-fluid h-100 nav-offset">
+      <div className = 'row h-100'>
+        <Router>
+        <NavBar/>
+        <Routes>
+          <Route path='/' exact element= {<OutputPanel/>}/>
+          <Route path='/test' element = {<InputPanel/>}/>
+        </Routes>
+      </Router> 
+      </div>
+      </div>
     </div>
   );
 }

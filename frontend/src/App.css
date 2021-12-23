@@ -8,3 +8,10 @@ html,body{
 .App {
   height: 100%;
 }
+.navbar{
+  border-bottom: 1px solid #ececec;
+}
+
+.nav-offset{
+  margin-top: 58px;
+}

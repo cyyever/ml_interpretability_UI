@@ -1,15 +1,71 @@
-
-.row .with-border{
-    border :2px solid olive;
-    padding-left: 0px;
-    padding-right: 0px;
+/*********************/
+/* Side Bar */
+.sideBar {
+  background-color: #2F4050;
+  width:12.5%;
+  flex: 0 0 12.5%;
+  max-width:12.5%;
 }
 
-.panel-header{
- background-color: olive;
- color: white;
- text-align: center;
+@media (min-width: 768px) {
+  .sideBar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      padding:0;
+  }
 }
+
+.offset-from-sideBar{
+  margin-left : 12.5%
+}
+
+
+.sidebarList{
+  height:auto;
+  padding:0;
+  width:100%
+}
+
+.sidebarList  .listRow{
+  width: 100%;
+  list-style-type:none;
+  padding:0;
+
+} 
+
+.listRow a{
+  width:100%;
+  height:60px;
+  margin:0%;
+  display:flex;
+  flex-direction:row;
+  color:white;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+.listRow:hover{
+  background-color: #293846;
+}
+
+.active{
+  background-color: #293846;
+}
+
+.listRow .icon{
+  flex: 30%;
+  display:grid;
+  place-items: center;
+}
+
+.listRow .title{
+  flex:70%;
+
+}
+/**********************/
+
 
 
 .fa:hover { 

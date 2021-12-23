@@ -13,9 +13,8 @@ export const getDatasetName = () =>{
 }
 
 
-export const getDataset = (param) =>{
-    let url = URI + "/dataset?datasetName="+param
-    console.log(url)
+export const getDataset = (datasetName , datasetType , datasetLabel) =>{
+    let url = URI + "/dataset?datasetName="+datasetName+"&datasetType="+datasetType+"&datasetLabel="+datasetLabel
     return axios.get(url).then(response =>{
         return response.data
     }).catch(error =>{
@@ -23,3 +22,13 @@ export const getDataset = (param) =>{
         throw error
     })
 } 
+
+export const getDatasetLabel = (datasetName , datasetType) => {
+    let url = URI + "/datasetLabel?datasetName="+datasetName+"&datasetType="+datasetType
+    return axios.get(url).then(reponse => {
+        return reponse.data
+    }).catch(error => {
+        console.log("failed to get dataset Label")
+        throw error
+    })
+}

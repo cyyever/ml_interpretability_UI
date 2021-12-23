@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import { Card } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next'
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import {getDataset} from '../assets/api-client.js'
+import {getDataset} from '../../assets/api-client.js'
 
  const customTotal = (from, to, size) => (
     <span className="react-bootstrap-table-pagination-total">
@@ -34,21 +35,22 @@ const selectRow = {
     bgColor : '#00BFFF',
 
 };
- class OutputTable extends Component {
-
-    constructor(){
-        super();
+ class DatasetTable extends Component {
+    constructor(props){
+        super(props);
         this.state={
             data : [],
-            selectedLabel: "",
+            selectedLabel: "",         
         }     
     }
 
-    componentDidMount(){
-        getDataset("CIFAR10")
-        .then((data_) =>{
-            this.setState({data : data_})
-        })
+
+    
+    componentDidUpdate(prevProps){
+        if (prevProps.data !== this.props.data){
+                this.setState({data :  this.props.data , selectedLabel:""})
+        }
+
     }
     columns = [
         {
@@ -70,17 +72,21 @@ const selectRow = {
 
     render() {
         return (
-            <div className='row ps-2'>
-                <div className = 'col-9'>
+            <Card bg="light">
+                <Card.Body>
+                <div className = "row"> 
+                <div className = "col-9">
                 <BootstrapTable hover condensed={true} keyField='id' data={this.state.data} columns={this.columns}  rowEvents = {this.rowEvents } 
                 pagination={ paginationFactory(options) } selectRow = {selectRow}/>
                 </div>
                 <div className = 'col-3 center'>
-                <img src = {this.state.selectedLabel ? "data:image/png;base64,"+this.state.selectedLabel.img : ""} alt = {this.state.selectedLabel.label} width="200" height = "200"/>
+                <img src = {this.state.selectedLabel ? "data:image/png;base64,"+this.state.selectedLabel.img : ""} alt = {this.state.selectedLabel.label} width="50" height = "50"/>
                 </div>
-            </div>
+                </div>
+                </Card.Body>
+            </Card>
         )
     }
 }
 
-export default OutputTable
+export default DatasetTable

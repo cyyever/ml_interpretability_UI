@@ -22,7 +22,8 @@ class DatasetNameView(APIView):
 class DatasetLabelView(APIView):
   def get(self, request):
     datasetName = request.query_params['datasetName']
-    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection(datasetName),1)
+    datasetType = request.query_params['datasetType']
+    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection(datasetName),int(datasetType))
     labels = list(dataset_.keys())
     labels.sort()
     return Response({"datasetLabel" : labels})
@@ -30,7 +31,7 @@ class DatasetLabelView(APIView):
 class DatasetView(APIView):
   def get(self, request):
     datasetName = request.query_params['datasetName']
-    label = request.query_params['label']
+    label = request.query_params['datasetLabel']
     dataset_ = dataset.get_label_indices(dataset.get_dataset_collection(datasetName),1)
     indexes = dataset_.get(label)
     return_data = []
@@ -43,5 +44,27 @@ class DatasetView(APIView):
       return_data.append({"img":  img_str.decode('UTF-8') ,"label" : label })
     return Response(return_data)
     
+class Dataset_v2View(APIView):
+  def get(self , request):
+    datasetName = request.query_params['datasetName']
+    datasetLabel = request.query_params['datasetLabel']
+    datasetType = request.query_params['datasetType']
+
+    dataset_ = dataset.generate_raw_data_from_dataset(dataset.get_dataset_collection(datasetName) , int(datasetType))
+
+    return_data = []
+    buffered = BytesIO()
+
+    for x in list(dataset_):
+      if str(x[1]) == str(datasetLabel):
+        x[0].save(buffered , format = "JPEG")
+        buffered.seek(0)
+        img_str = base64.b64encode(buffered.getvalue())
+        return_data.append({"img" :img_str.decode('UTF-8') , "label" : x[1]})
+    return Response(return_data)
+
+  
+
+
 
 

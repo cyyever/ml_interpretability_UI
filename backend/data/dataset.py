@@ -23,17 +23,18 @@ class dataset:
     # def get_dataset_size(dc: DatasetCollection, phase: MachineLearningPhase):
     #     return len(dc.get_dataset(phase))
 
-    # def generate_raw_data_from_dataset(
-    #     dc: DatasetCollection, phase: MachineLearningPhase
-    # ) -> typing.Sequence[tuple]:
-    #     return dc.generate_raw_data(phase)
+    def generate_raw_data_from_dataset(
+         dc: DatasetCollection, phase: MachineLearningPhase
+     ) -> typing.Sequence[tuple]:
+         return dc.generate_raw_data(phase)
 
+''' test driver'''
 
-if __name__ == "__main__":
-    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
-    indexes = dataset_.get("9")
-    return_data = []
-    for x in list(indexes):
-        result = list(dataset.get_raw_data_from_dataset(dataset.get_dataset_collection("CIFAR10") , 1, x))
-        return_data.append(result)
+#if __name__ == "__main__":
+#    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
+#    indexes = dataset_.get("9")
+#    return_data = []
+#    for x in list(indexes):
+#        result = list(dataset.get_raw_data_from_dataset(dataset.get_dataset_collection("CIFAR10") , 1, x))
+#        return_data.append(result)
    
