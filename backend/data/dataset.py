@@ -15,8 +15,8 @@ class dataset:
         labels = dc.get_dataset_util(phase=phase).split_by_label()
         return {str(k): v["indices"] for k, v in labels.items()}
 
-    def get_label_set(dc: DatasetCollection) -> list:
-        return sorted(dc.get_labels())
+    def get_label_names(dc: DatasetCollection) -> list:
+        return dict(enumerate(dc.get_label_names()))
 
     def get_raw_data_from_dataset(
         dc: DatasetCollection, phase: MachineLearningPhase, index: int
