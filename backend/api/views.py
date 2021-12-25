@@ -51,9 +51,11 @@ class Dataset_v2View(APIView):
         datasetName = request.query_params["datasetName"]
         datasetLabel = request.query_params["datasetLabel"]
         datasetType = request.query_params["datasetType"]
-
+        
+        dc = dataset.get_dataset_collection(datasetName)
+        labels =  dataset.get_label_names(dc)
         dataset_ = dataset.generate_raw_data_from_dataset(
-            dataset.get_dataset_collection(datasetName), int(datasetType)
+           dc, int(datasetType)
         )
 
         return_data = []
@@ -64,5 +66,5 @@ class Dataset_v2View(APIView):
                 x[0].save(buffered, format="JPEG")
                 buffered.seek(0)
                 img_str = base64.b64encode(buffered.getvalue())
-                return_data.append({"img": img_str.decode("UTF-8"), "label": x[1]})
+                return_data.append({"img": img_str.decode("UTF-8"), "label": labels[x[1]]})
         return Response(return_data)
