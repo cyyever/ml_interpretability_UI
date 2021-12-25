@@ -58,10 +58,10 @@ class DatasetForm extends Component {
   };
 
   handleDatasetTypeInput = (event) =>{
-    this.setState({selectedDatasetType : event.target.value , selectedDatasetLabel: "default"} , () =>{
+    this.setState({selectedDatasetType : event.target.value} , () =>{
       if(this.state.selectedDataset !== "default"){
-        getDatasetLabel(this.state.selectedDataset , this.state.selectedDatasetType).then((data) => {
-          this.setState({labels: data.datasetLabel , data : []})
+        getDataset(this.state.selectedDataset , this.state.selectedDatasetType , this.state.selectedDatasetLabel).then((data_) =>{
+          this.setState({data : data_})
         })
       }
     })
@@ -97,7 +97,7 @@ class DatasetForm extends Component {
 
                   <div className="col-sm-3">
                     <label className=" form-label fw-bolder ">Dataset Type :</label>
-                    <select className="form-select form-select-solid form-select-sm" value={this.state.selectedDataset} onChange={this.handleDatasetTypeInput}>
+                    <select className="form-select form-select-solid form-select-sm" value={this.state.selectedDatasetType} onChange={this.handleDatasetTypeInput}>
                       {datasetType.map((type) => (<option key={type.value} value={type.value}> {type.type} </option>))}
                     </select>
                   </div>
