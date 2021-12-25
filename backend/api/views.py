@@ -15,9 +15,12 @@ class DatasetNameView(APIView):
 
 class DatasetLabelView(APIView):
     def get(self, request):
+        return_value = []
         datasetName = request.query_params["datasetName"]
         dc = dataset.get_dataset_collection(datasetName)
-        return Response({"datasetLabelName": dataset.get_label_names(dc)})
+        for key , value in dataset.get_label_names(dc).items():
+            return_value.append({"value" : key , "label" : value})
+        return Response({"datasetLabelName": return_value})
 
 
 class DatasetView(APIView):

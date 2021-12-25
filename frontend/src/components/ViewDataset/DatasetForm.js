@@ -51,7 +51,7 @@ class DatasetForm extends Component {
     var data = event.target.value
     this.setState({ selectedDataset: data , labels: []  , selectedDatasetLabel : "default"} ,  () =>{
       getDatasetLabel(this.state.selectedDataset , this.state.selectedDatasetType).then((data) => {
-        this.setState({labels: data.datasetLabel})
+        this.setState({labels: data.datasetLabelName})
       })
 
     });
@@ -72,11 +72,11 @@ class DatasetForm extends Component {
       if(this.state.selectedDatasetLabel !== "default"){
         getDataset(this.state.selectedDataset , this.state.selectedDatasetType , this.state.selectedDatasetLabel).then((data_) =>{
           this.setState({data : data_})
-          console.log(this.state.data)
       })
       }
     })
   }
+
   render() {
     return (
       <>
@@ -108,7 +108,7 @@ class DatasetForm extends Component {
                       <option value="default" hidden disabled>
                         Select dataset Label
                       </option>
-                      {this.state.labels.map(label =>(<option key={label} value = {label}>{label}</option>))}
+                      {this.state.labels.map((label) => (<option key={label.value} value={label.value}>{label.label}</option>))}
                     </select>
                   </div>
                 </div>

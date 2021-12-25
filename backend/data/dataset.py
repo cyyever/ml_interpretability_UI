@@ -13,7 +13,7 @@ class dataset:
 
     def get_label_indices(dc: DatasetCollection, phase: MachineLearningPhase) -> dict:
         labels = dc.get_dataset_util(phase=phase).split_by_label()
-        return {str(k): v["indices"] for k, v in labels.items()}
+        return {k: v["indices"] for k, v in labels.items()}
 
     def get_label_names(dc: DatasetCollection) -> list:
         return dict(enumerate(dc.get_label_names()))
@@ -34,7 +34,8 @@ class dataset:
 
 """ test driver"""
 
-# if __name__ == "__main__":
+#if __name__ == "__main__":
+#    print(dataset.get_label_names(dataset.get_dataset_collection("CIFAR10")))
 #    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
 #    indexes = dataset_.get("9")
 #    return_data = []
