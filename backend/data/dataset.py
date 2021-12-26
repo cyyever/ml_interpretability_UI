@@ -39,9 +39,6 @@ class dataset:
     ) -> tuple:
         return cls.get_dataset_collection(name).get_raw_data(phase, index)
 
-    # def get_dataset_size(dc: DatasetCollection, phase: MachineLearningPhase):
-    #     return len(dc.get_dataset(phase))
-
     @classmethod
     def generate_raw_data_from_dataset(
         cls, name: str, phase: MachineLearningPhase

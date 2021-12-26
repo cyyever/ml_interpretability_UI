@@ -31,24 +31,19 @@ class DatasetLabelIndexView(APIView):
         return Response({"indices": list(labels)})
 
 
-class Dataset_v2View(APIView):
+class RawDataView(APIView):
     def get(self, request):
         datasetName = request.query_params["datasetName"]
-        datasetLabel = request.query_params["datasetLabel"]
         datasetType = request.query_params["datasetType"]
-
-        labels = dataset.get_label_names(datasetName)
-        dataset_ = dataset.generate_raw_data_from_dataset(datasetName, int(datasetType))
+        indices = request.query_params["indices"]
 
         return_data = []
         buffered = BytesIO()
 
-        for x in list(dataset_):
-            if str(x[1]) == str(datasetLabel):
-                x[0].save(buffered, format="JPEG")
-                buffered.seek(0)
-                img_str = base64.b64encode(buffered.getvalue())
-                return_data.append(
-                    {"img": img_str.decode("UTF-8"), "label": labels[x[1]]}
-                )
+        for index in indices:
+            data = dataset.get_raw_data_from_dataset(datasetName, datasetType, index)
+            data.save(buffered, format="JPEG")
+            buffered.seek(0)
+            img_str = base64.b64encode(buffered.getvalue())
+            return_data.append(img_str.decode("UTF-8"))
         return Response(return_data)
