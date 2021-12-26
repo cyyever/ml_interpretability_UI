@@ -22,21 +22,13 @@ class DatasetLabelView(APIView):
         return Response({"datasetLabelName": return_value})
 
 
-class DatasetView(APIView):
+class DatasetLabelIndexView(APIView):
     def get(self, request):
         datasetName = request.query_params["datasetName"]
-        label = request.query_params["datasetLabel"]
-        dataset_ = dataset.get_label_indices(datasetName, 1)
-        indexes = dataset_.get(label)
-        return_data = []
-        buffered = BytesIO()
-        for x in list(indexes):
-            result = list(dataset.get_raw_data_from_dataset(datasetName, 1, x))
-            result[0].save(buffered, format="JPEG")
-            buffered.seek(0)
-            img_str = base64.b64encode(buffered.getvalue())
-            return_data.append({"img": img_str.decode("UTF-8"), "label": label})
-        return Response(return_data)
+        datasetType = request.query_params["datasetType"]
+        datasetLabel = request.query_params["datasetLabel"]
+        labels = dataset.get_label_indices(datasetName, datasetType)[datasetLabel]
+        return Response({"indices": list(labels)})
 
 
 class Dataset_v2View(APIView):
