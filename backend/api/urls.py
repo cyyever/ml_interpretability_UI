@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (Dataset_v2View, DatasetLabelIndexView, DatasetLabelView,
+from .views import (RawDataView, DatasetLabelIndexView, DatasetLabelView,
                     DatasetNameView)
 
 urlpatterns = [
