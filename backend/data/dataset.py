@@ -5,36 +5,53 @@ from cyy_torch_toolbox.ml_type import MachineLearningPhase
 
 
 class dataset:
-    def get_supported_dataset_names() -> typing.Sequence[str]:
-        return DatasetCollection.get_dataset_constructors().keys()
+    dataset_collections: dict = {}
 
-    def get_dataset_collection(name: str) -> DatasetCollection:
-        return DatasetCollection.get_by_name(name)
+    @classmethod
+    def get_supported_dataset_names(cls) -> typing.Sequence[str]:
+        return sorted(
+            DatasetCollection.get_dataset_constructors().keys(), key=str.casefold
+        )
 
-    def get_label_indices(dc: DatasetCollection, phase: MachineLearningPhase) -> dict:
-        labels = dc.get_dataset_util(phase=phase).split_by_label()
+    @classmethod
+    def get_dataset_collection(cls, name: str) -> DatasetCollection:
+        if name not in cls.dataset_collections:
+            print(name)
+            cls.dataset_collections[name] = DatasetCollection.get_by_name(name)
+        return cls.dataset_collections[name]
+
+    @classmethod
+    def get_label_indices(cls, name: str, phase: MachineLearningPhase) -> dict:
+        labels = (
+            cls.get_dataset_collection(name)
+            .get_dataset_util(phase=phase)
+            .split_by_label()
+        )
         return {k: v["indices"] for k, v in labels.items()}
 
-    def get_label_names(dc: DatasetCollection) -> list:
-        return dict(enumerate(dc.get_label_names()))
+    @classmethod
+    def get_label_names(cls, name: str) -> dict:
+        return dict(enumerate(cls.get_dataset_collection(name).get_label_names()))
 
+    @classmethod
     def get_raw_data_from_dataset(
-        dc: DatasetCollection, phase: MachineLearningPhase, index: int
+        cls, name: str, phase: MachineLearningPhase, index: int
     ) -> tuple:
-        return dc.get_raw_data(phase, index)
+        return cls.get_dataset_collection(name).get_raw_data(phase, index)
 
     # def get_dataset_size(dc: DatasetCollection, phase: MachineLearningPhase):
     #     return len(dc.get_dataset(phase))
 
+    @classmethod
     def generate_raw_data_from_dataset(
-        dc: DatasetCollection, phase: MachineLearningPhase
+        cls, name: str, phase: MachineLearningPhase
     ) -> typing.Sequence[tuple]:
-        return dc.generate_raw_data(phase)
+        return cls.get_dataset_collection(name).generate_raw_data(phase)
 
 
 """ test driver"""
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    print(dataset.get_label_names(dataset.get_dataset_collection("CIFAR10")))
 #    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
 #    indexes = dataset_.get("9")
