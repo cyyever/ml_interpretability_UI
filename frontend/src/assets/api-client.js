@@ -72,3 +72,9 @@ export const getDatasetLabel = (datasetName, datasetType) => {
       throw error;
     });
 };
+
+
+export const getImageData = () => {
+
+};
+

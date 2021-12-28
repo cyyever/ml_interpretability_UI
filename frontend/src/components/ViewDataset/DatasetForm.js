@@ -168,7 +168,7 @@ class DatasetForm extends Component {
           </Card>
         </div>
 
-        <DatasetTable data={this.state.data} />
+
       </>
     );
   }
