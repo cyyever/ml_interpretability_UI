@@ -15,6 +15,24 @@ export const getDatasetName = () => {
     });
 };
 
+export const getDatasetLabel = (datasetName, datasetType) => {
+  let url =
+    URI +
+    "/datasetLabel?datasetName=" +
+    datasetName +
+    "&datasetType=" +
+    datasetType;
+  return axios
+    .get(url)
+    .then((reponse) => {
+      return reponse.data;
+    })
+    .catch((error) => {
+      console.log("failed to get dataset Label");
+      throw error;
+    });
+};
+
 export const getLabelIndices = (datasetName, datasetType, datasetLabel) => {
   let url =
     URI +
@@ -35,46 +53,15 @@ export const getLabelIndices = (datasetName, datasetType, datasetLabel) => {
     });
 };
 
-export const getDataset = (datasetName, datasetType, datasetLabel) => {
-  let url =
-    URI +
-    "/dataset?datasetName=" +
-    datasetName +
-    "&datasetType=" +
-    datasetType +
-    "&datasetLabel=" +
-    datasetLabel;
-  return axios
-    .get(url)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.log("failed to get dataset");
-      throw error;
-    });
-};
 
-export const getDatasetLabel = (datasetName, datasetType) => {
-  let url =
-    URI +
-    "/datasetLabel?datasetName=" +
-    datasetName +
-    "&datasetType=" +
-    datasetType;
-  return axios
-    .get(url)
-    .then((reponse) => {
-      return reponse.data;
-    })
-    .catch((error) => {
-      console.log("failed to get dataset Label");
-      throw error;
-    });
-};
-
-
-export const getImageData = () => {
+export const getImageData = (datasetName , datasetType , indices) => {
+  let url = URI + "/rawData?datasetName=" + datasetName + "&datasetType=" + datasetType + "&indices="+indices.toString();
+  return axios.get(url).then((response) => {
+    return response.data;
+  }).catch((error) => {
+    console.log("failed to get image data");
+    throw error;
+  })
 
 };
 

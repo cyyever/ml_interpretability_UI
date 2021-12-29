@@ -1,20 +1,50 @@
 import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate'
 import { Card } from 'react-bootstrap';
-
+import {getImageData} from '../../assets/api-client.js'
 class ImagePagination extends Component {
     constructor(props){
         super(props);
         this.state={
             data : [],
+            datasetName : "",
+            datasetType: "",
             offset : 0,
-            ImgData : [],
+            imgData : [],
             perPage : 10,
-            currentPage : 0
+            currentPage : 0,
+            pageCount : 0,
         }     
     }
-    recievedImageData(){
+
+    componentDidUpdate(prevProps){
+        if (prevProps.data !== this.props.data && this.props.data.length !==0){
+            this.setState({data :  this.props.data , datasetName: this.props.datasetName , 
+                datasetType : this.props.datasetType ,  pageCount: Math.ceil(this.props.data.length / this.state.perPage)} , () =>{
+                var indices = []
+                if (this.state.data.length > this.state.perPage){
+                    indices = this.state.data.slice(0,this.state.perPage) 
+                    
+                }else{
+                    indices = this.state.data
+                }
+         
+                this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+            })
+        
+        }
+        
+    }
+
+
+    recievedImageData(datasetName , datasetType , indices){
         // call Image API Method
+        if(indices.length !== 0){
+            getImageData(datasetName , datasetType , indices).then((data) =>{
+                 this.setState({imgData : data})
+            })
+        }
+
     }
 
     handlePageClick = (e) => {
@@ -25,9 +55,16 @@ class ImagePagination extends Component {
             currentPage : selectedPage,
             offset : offset
         } , () => {
-            this.recievedImageData()
+            var indices = []
+            if (this.state.offset + this.state.perPage < this.state.data.length) {
+                    indices = this.state.data.slice(this.state.offset , this.state.offset + this.state.perPage)
+            }else{
+                indices = this.state.data.slice(this.state.offset , this.state.data.length)
+            }
+            this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
         })
     }
+
 
     render() {
         return (
@@ -35,12 +72,15 @@ class ImagePagination extends Component {
                 <Card.Body>
                 <div className = "row"> 
                     <div className = "col">
+                        {this.state.imgData.map((img , key) =>(
+                           <img key = {key} src = {"data:image/png;base64,"+img} alt = "Image Picture" width="50" height = "50"/>
+                        ))}
                         <ReactPaginate
                             nextLabel="next >"
                             onPageChange={this.handlePageClick}
                             pageRangeDisplayed={3}
                             marginPagesDisplayed={2}
-                            pageCount={pageCount}
+                            pageCount={this.state.pageCount}
                             previousLabel="< previous"
                             pageClassName="page-item"
                             pageLinkClassName="page-link"

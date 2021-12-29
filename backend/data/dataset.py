@@ -48,8 +48,11 @@ class dataset:
 
 """ test driver"""
 
-# if __name__ == "__main__":
-#    print(dataset.get_label_names(dataset.get_dataset_collection("CIFAR10")))
+#if __name__ == "__main__":
+#    print(dataset.get_label_names("CIFAR10"))
+#    print(list(dataset.get_label_indices("CIFAR10" , 1)))
+#    labels = dataset.get_label_indices("CIFAR10", 1)[2]
+#    print(labels)
 #    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
 #    indexes = dataset_.get("9")
 #    return_data = []

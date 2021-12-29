@@ -1,6 +1,5 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 import React from 'react';
 import NavBar from './components/NavBar/NavBar';

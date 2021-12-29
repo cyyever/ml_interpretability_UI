@@ -2,12 +2,10 @@ import React, { Component } from "react";
 import {
   getDatasetName,
   getDatasetLabel,
-  getDataset,
-  getLabelIndices,
+  getLabelIndices
 } from "../../assets/api-client.js";
 import { Card } from "react-bootstrap";
-import DatasetTable from "./DatasetTable.js";
-
+import ImagePagination from "./ImagePagination.js";
 const datasetType = [
   {
     type: "Train",
@@ -68,8 +66,8 @@ class DatasetForm extends Component {
 
   handleDatasetTypeInput = (event) => {
     this.setState({ selectedDatasetType: event.target.value }, () => {
-      if (this.state.selectedDataset !== "default") {
-        getDataset(
+      if (this.state.selectedDataset !== "default"  && this.state.selectedDatasetLabel !=="default") {
+        getLabelIndices(
           this.state.selectedDataset,
           this.state.selectedDatasetType,
           this.state.selectedDatasetLabel
@@ -85,12 +83,12 @@ class DatasetForm extends Component {
       { selectedDatasetLabel: event.target.value, data: [] },
       () => {
         if (this.state.selectedDatasetLabel !== "default") {
-          getDataset(
+          getLabelIndices(
             this.state.selectedDataset,
             this.state.selectedDatasetType,
             this.state.selectedDatasetLabel
           ).then((data_) => {
-            this.setState({ data: data_ });
+            this.setState({ data: data_.indices });
           });
         }
       }
@@ -167,6 +165,8 @@ class DatasetForm extends Component {
             </Card.Body>
           </Card>
         </div>
+
+        <ImagePagination data = {this.state.data} datasetName = {this.state.selectedDataset} datasetType = {this.state.selectedDatasetType} />
 
 
       </>
