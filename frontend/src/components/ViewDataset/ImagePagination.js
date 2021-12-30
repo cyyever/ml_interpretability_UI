@@ -42,8 +42,11 @@ class ImagePagination extends Component {
     recievedImageData(datasetName , datasetType , indices){
         // call Image API Method
         if(indices.length !== 0){
+            this.props.displaySpinner(true)
             getImageData(datasetName , datasetType , indices).then((data) =>{
-                 this.setState({imgData : data})
+                 this.setState({imgData : data} , ()=>{
+                     this.props.displaySpinner(false)
+                 })
             })
         }
 
@@ -68,7 +71,6 @@ class ImagePagination extends Component {
     }
 
     handleImageClick = (e) =>{
-        console.log(e.target.src)
         this.setState({selectedImage : e.target.src})
     }
     render() {

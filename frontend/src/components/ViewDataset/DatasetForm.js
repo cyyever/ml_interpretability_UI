@@ -4,7 +4,7 @@ import {
   getDatasetLabel,
   getLabelIndices
 } from "../../assets/api-client.js";
-import { Card } from "react-bootstrap";
+import { Card , Spinner } from "react-bootstrap";
 import ImagePagination from "./ImagePagination.js";
 const datasetType = [
   {
@@ -31,6 +31,7 @@ class DatasetForm extends Component {
       selectedDatasetType: datasetType[0].value,
       selectedDatasetLabel: "default",
       data: [],
+      displayedSpinner : false,
     };
   }
 
@@ -52,27 +53,27 @@ class DatasetForm extends Component {
   handleDatasetInput = (event) => {
     var data = event.target.value;
     this.setState(
-      { selectedDataset: data, labels: [], selectedDatasetLabel: "default" },
+      { selectedDataset: data, labels: [], selectedDatasetLabel: "default" , displayedSpinner : true },
       () => {
         getDatasetLabel(
           this.state.selectedDataset,
           this.state.selectedDatasetType
         ).then((data) => {
-          this.setState({ labels: data.datasetLabelName });
+          this.setState({ labels: data.datasetLabelName  , displayedSpinner : false});
         });
       }
     );
   };
 
   handleDatasetTypeInput = (event) => {
-    this.setState({ selectedDatasetType: event.target.value }, () => {
+    this.setState({ selectedDatasetType: event.target.value , displayedSpinner : true}, () => {
       if (this.state.selectedDataset !== "default"  && this.state.selectedDatasetLabel !=="default") {
         getLabelIndices(
           this.state.selectedDataset,
           this.state.selectedDatasetType,
           this.state.selectedDatasetLabel
         ).then((data_) => {
-          this.setState({ data: data_ });
+          this.setState({ data: data_  , displayedSpinner : false});
         });
       }
     });
@@ -80,7 +81,7 @@ class DatasetForm extends Component {
 
   handleDatasetLabel = (event) => {
     this.setState(
-      { selectedDatasetLabel: event.target.value, data: [] },
+      { selectedDatasetLabel: event.target.value, data: [] , displayedSpinner : true },
       () => {
         if (this.state.selectedDatasetLabel !== "default") {
           getLabelIndices(
@@ -88,12 +89,13 @@ class DatasetForm extends Component {
             this.state.selectedDatasetType,
             this.state.selectedDatasetLabel
           ).then((data_) => {
-            this.setState({ data: data_.indices });
+            this.setState({ data: data_.indices ,displayedSpinner : false});
           });
         }
       }
     );
   };
+
 
   render() {
     return (
@@ -160,13 +162,16 @@ class DatasetForm extends Component {
                       ))}
                     </select>
                   </div>
+                  {this.state.displayedSpinner ?  
+                  <div className="col form-spinner"><Spinner animation="border" /></div> : ""}
+                 
                 </div>
               </form>
             </Card.Body>
           </Card>
         </div>
 
-        <ImagePagination data = {this.state.data} datasetName = {this.state.selectedDataset} datasetType = {this.state.selectedDatasetType} />
+        <ImagePagination data = {this.state.data} datasetName = {this.state.selectedDataset} datasetType = {this.state.selectedDatasetType} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
 
 
       </>

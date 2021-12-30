@@ -76,6 +76,11 @@
   width: auto
 }
 
+.form-spinner{
+  display: flex;
+  align-items: center;
+}
+
 .fa:hover { 
     color: #0351f8;
     cursor: pointer;
