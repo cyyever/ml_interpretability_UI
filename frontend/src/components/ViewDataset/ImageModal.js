@@ -8,10 +8,11 @@ class ImageModal extends Component {
             showHide:false,
             imgData : "",
         }
+        
+    
     }
-
-    componentDidUpdate(prevProps){
-        if(prevProps.imgData !== this.props.imgData){
+    componentDidMount(){
+        if(this.props.imgData !== ""){
             this.setState({imgData : this.props.imgData , showHide : !this.state.showHide})
         }
     }
@@ -22,7 +23,7 @@ class ImageModal extends Component {
     
     render() {
         return (
-        <Modal show={this.state.showHide} onHide = {()=> this.handleModalShowHide()} animation={false} dialogClassName='modal-dialog-img' contentClassName='modal-content-img' 
+        <Modal show={this.state.showHide} onHide = {()=> this.handleModalShowHide()} animation={false}dialogClassName='modal-dialog-img' contentClassName='modal-content-img' 
         centered>
             <Modal.Body>
             {this.state.imgData ?  <img src = {this.state.imgData} className="img-fluid" alt = "Image Picture"/> : ""}

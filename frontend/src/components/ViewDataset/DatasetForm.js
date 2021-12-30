@@ -171,7 +171,7 @@ class DatasetForm extends Component {
           </Card>
         </div>
 
-        <ImagePagination data = {this.state.data} datasetName = {this.state.selectedDataset} datasetType = {this.state.selectedDatasetType} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
+        <ImagePagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset} datasetType = {this.state.selectedDatasetType} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
 
 
       </>

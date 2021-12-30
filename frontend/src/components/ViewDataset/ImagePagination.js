@@ -19,8 +19,7 @@ class ImagePagination extends Component {
         }     
     }
 
-    componentDidUpdate(prevProps){
-        if (prevProps.data !== this.props.data && this.props.data.length !==0){
+    componentDidMount(){
             this.setState({data :  this.props.data , datasetName: this.props.datasetName , 
                 datasetType : this.props.datasetType ,  pageCount: Math.ceil(this.props.data.length / this.state.perPage)} , () =>{
                 var indices = []
@@ -34,7 +33,7 @@ class ImagePagination extends Component {
                 this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
             })
         
-        }
+        
         
     }
 
@@ -71,8 +70,11 @@ class ImagePagination extends Component {
     }
 
     handleImageClick = (e) =>{
-        this.setState({selectedImage : e.target.src})
+        this.setState({selectedImage : ""}, () =>{
+            this.setState({selectedImage :  e.target.src})
+        })
     }
+
     render() {
         return (
             <Card bg="light">
@@ -106,7 +108,7 @@ class ImagePagination extends Component {
                     </div>
                 </div>
                 </Card.Body>
-                <ImageModal imgData = {this.state.selectedImage}/>
+                <ImageModal key = {this.state.selectedImage} imgData = {this.state.selectedImage}/>
             </Card>
         )
     }
