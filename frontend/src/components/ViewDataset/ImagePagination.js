@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate'
 import { Card } from 'react-bootstrap';
 import {getImageData} from '../../assets/api-client.js'
+import ImageModal from './ImageModal.js';
 class ImagePagination extends Component {
     constructor(props){
         super(props);
@@ -11,9 +12,10 @@ class ImagePagination extends Component {
             datasetType: "",
             offset : 0,
             imgData : [],
-            perPage : 10,
+            perPage : 21,
             currentPage : 0,
             pageCount : 0,
+            selectedImage:"",
         }     
     }
 
@@ -65,7 +67,10 @@ class ImagePagination extends Component {
         })
     }
 
-
+    handleImageClick = (e) =>{
+        console.log(e.target.src)
+        this.setState({selectedImage : e.target.src})
+    }
     render() {
         return (
             <Card bg="light">
@@ -73,7 +78,8 @@ class ImagePagination extends Component {
                 <div className = "row"> 
                     <div className = "col">
                         {this.state.imgData.map((img , key) =>(
-                           <img key = {key} src = {"data:image/png;base64,"+img} alt = "Image Picture" width="50" height = "50"/>
+                           <img key = {key} src = {"data:image/png;base64,"+img} alt = "Image Picture" width="50" height = "50"
+                           onClick = {this.handleImageClick}/>
                         ))}
                         <ReactPaginate
                             nextLabel="next >"
@@ -98,6 +104,7 @@ class ImagePagination extends Component {
                     </div>
                 </div>
                 </Card.Body>
+                <ImageModal imgData = {this.state.selectedImage}/>
             </Card>
         )
     }

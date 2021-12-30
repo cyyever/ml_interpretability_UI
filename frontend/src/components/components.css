@@ -66,7 +66,15 @@
 }
 /**********************/
 
-
+.modal-dialog-img{
+  text-align:center;
+  justify-content: center;
+  
+}
+.modal-content-img{
+  display:inline-block;
+  width: auto
+}
 
 .fa:hover { 
     color: #0351f8;
