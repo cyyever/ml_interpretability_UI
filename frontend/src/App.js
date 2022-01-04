@@ -18,7 +18,7 @@ function App() {
     </div>
   </Navbar>
 
-      <div className = "container-fluid h-100 nav-offset">
+      <div className = "container-fluid nav-offset main-content">
       <div className = 'row h-100'>
         <Router>
         <NavBar/>

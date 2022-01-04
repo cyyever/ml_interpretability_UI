@@ -3,6 +3,9 @@ import ReactPaginate from 'react-paginate'
 import { Card } from 'react-bootstrap';
 import {getImageData} from '../../assets/api-client.js'
 import ImageModal from './ImageModal.js';
+
+const imagePerPageList = [20,25,30,35,40];
+
 class ImagePagination extends Component {
     constructor(props){
         super(props);
@@ -12,7 +15,7 @@ class ImagePagination extends Component {
             datasetType: "",
             offset : 0,
             imgData : [],
-            perPage : 21,
+            perPage : imagePerPageList[0],
             currentPage : 0,
             pageCount : 0,
             selectedImage:"",
@@ -20,7 +23,7 @@ class ImagePagination extends Component {
     }
 
     componentDidMount(){
-            this.setState({data :  this.props.data , datasetName: this.props.datasetName , 
+            this.setState({data :  this.props.data , datasetName: this.props.datasetName , imgData : [],
                 datasetType : this.props.datasetType ,  pageCount: Math.ceil(this.props.data.length / this.state.perPage)} , () =>{
                 var indices = []
                 if (this.state.data.length > this.state.perPage){
@@ -29,7 +32,6 @@ class ImagePagination extends Component {
                 }else{
                     indices = this.state.data
                 }
-         
                 this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
             })
         
@@ -55,6 +57,7 @@ class ImagePagination extends Component {
         const selectedPage = e.selected;
         const offset = selectedPage * this.state.perPage;
 
+        
         this.setState({
             currentPage : selectedPage,
             offset : offset
@@ -75,16 +78,57 @@ class ImagePagination extends Component {
         })
     }
 
+
+
+
+    handleImagesPerPage = (e) =>{
+        this.setState({perPage: parseInt(e.target.value) , pageCount: Math.ceil(this.state.data.length / parseInt(e.target.value)) ,
+             currentPage : 0 , offset : this.state.currentPage * this.state.perPage} , ()=>{
+                var indices = []
+                if (this.state.data.length > this.state.perPage){
+                    indices = this.state.data.slice(0,this.state.perPage) 
+                    
+                }else{
+                    indices = this.state.data
+                }
+         
+                this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+        })
+    }
     render() {
-        return (
-            <Card bg="light">
+        let renderContent = ""
+        this.state.data.length > 0 ?  renderContent = 
+        <Card bg="light" className="h-100">
                 <Card.Body>
                 <div className = "row"> 
-                    <div className = "col">
+
+                <div className="col-sm-2">
+                    <label className=" form-label fw-bolder ">
+                      Images per Page :
+                    </label>
+                    <select
+                      className="form-select form-select-solid form-select-sm"
+                      value={this.state.selectedDatasetType}
+                      onChange={this.handleImagesPerPage}
+                    >
+                      {imagePerPageList.map((num) => (
+                        <option key={num} value={num}>
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                    <div className = "col-sm-12 py-2">
+                        <div className = "row">
                         {this.state.imgData.map((img , key) =>(
+                            <div className="col-sm-1 py-2" key = {key}>
+                    
                            <img key = {key} src = {"data:image/png;base64,"+img} alt = "Image Picture" width="50" height = "50"
-                           onClick = {this.handleImageClick}/>
+                           onClick = {this.handleImageClick} />
+                           </div>
                         ))}
+                        </div>
                         <ReactPaginate
                             nextLabel="next >"
                             onPageChange={this.handlePageClick}
@@ -101,15 +145,20 @@ class ImagePagination extends Component {
                             breakLabel="..."
                             breakClassName="page-item"
                             breakLinkClassName="page-link"
-                            containerClassName="pagination"
+                            containerClassName="pagination py-2"
                             activeClassName="active"
                             renderOnZeroPageCount={null}
+                            forcePage = {this.state.currentPage}
                         />
                     </div>
                 </div>
                 </Card.Body>
                 <ImageModal key = {this.state.selectedImage} imgData = {this.state.selectedImage}/>
             </Card>
+
+        : renderContent = ""
+        return (
+            renderContent
         )
     }
 }

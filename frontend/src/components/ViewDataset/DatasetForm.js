@@ -73,7 +73,7 @@ class DatasetForm extends Component {
           this.state.selectedDatasetType,
           this.state.selectedDatasetLabel
         ).then((data_) => {
-          this.setState({ data: data_  , displayedSpinner : false});
+          this.setState({ data: data_.indices  , displayedSpinner : false});
         });
       }
     });
@@ -81,7 +81,7 @@ class DatasetForm extends Component {
 
   handleDatasetLabel = (event) => {
     this.setState(
-      { selectedDatasetLabel: event.target.value, data: [] , displayedSpinner : true },
+      { selectedDatasetLabel: event.target.value, displayedSpinner : true },
       () => {
         if (this.state.selectedDatasetLabel !== "default") {
           getLabelIndices(
@@ -136,8 +136,7 @@ class DatasetForm extends Component {
                     >
                       {datasetType.map((type) => (
                         <option key={type.value} value={type.value}>
-                          {" "}
-                          {type.type}{" "}
+                          {type.type}
                         </option>
                       ))}
                     </select>
