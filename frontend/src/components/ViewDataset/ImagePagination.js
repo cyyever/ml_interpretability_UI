@@ -98,7 +98,7 @@ class ImagePagination extends Component {
 
     handleJumpPage = (e) =>{
         this.setState({jumpPage:e.target.value},()=>{
-            if(this.state.jumpPage && !isNaN(this.state.jumpPage) && (parseInt(this.state.jumpPage)-1) !== this.state.currentPage){
+            if(this.state.jumpPage && !isNaN(this.state.jumpPage) && (parseInt(this.state.jumpPage)-1) > 0  && (parseInt(this.state.jumpPage)-1) < this.state.pageCount && (parseInt(this.state.jumpPage)-1) !== this.state.currentPage){
                 this.setState({currentPage :  parseInt(this.state.jumpPage)-1 , offset : (parseInt(this.state.jumpPage)-1) * this.state.perPage},()=>{
                     var indices = []
                     if (this.state.offset + this.state.perPage < this.state.data.length) {
