@@ -4,14 +4,14 @@ import {FaHome , FaTable} from "react-icons/fa"
 
 export const SidebarData = [
 {
-    title: 'Home',
+    title: 'Data Gallery',
     path : '/',
-    icon : <FaHome size={20}/>,
+    icon : <FaTable size={20}/>,
 },
 {
     title:'Page 2',
     path:'/test',
-    icon : <FaTable size={20}/>,
+    icon : <FaHome size={20}/>,
 }
 
 

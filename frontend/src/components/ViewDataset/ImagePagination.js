@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate'
-import { Card } from 'react-bootstrap';
+import { Card ,Popover, OverlayTrigger , Button , Form} from 'react-bootstrap';
 import {getImageData} from '../../assets/api-client.js'
 import ImageModal from './ImageModal.js';
 
-const imagePerPageList = [20,25,30,35,40];
+const imagePerPageList = [20,25,30,35,40,45,50];
 
 class ImagePagination extends Component {
     constructor(props){
@@ -19,6 +19,7 @@ class ImagePagination extends Component {
             currentPage : 0,
             pageCount : 0,
             selectedImage:"",
+            jumpPage : "",
         }     
     }
 
@@ -56,7 +57,6 @@ class ImagePagination extends Component {
     handlePageClick = (e) => {
         const selectedPage = e.selected;
         const offset = selectedPage * this.state.perPage;
-
         
         this.setState({
             currentPage : selectedPage,
@@ -95,7 +95,36 @@ class ImagePagination extends Component {
                 this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
         })
     }
+
+    jumpPageButtonOnClicked = () =>{
+        if(this.state.jumpPage && (parseInt(this.state.jumpPage)-1) !== this.state.currentPage){
+        this.setState({currentPage :  parseInt(this.state.jumpPage)-1 , offset : (parseInt(this.state.jumpPage)-1) * this.state.perPage , jumpPage:""},()=>{
+            var indices = []
+            if (this.state.offset + this.state.perPage < this.state.data.length) {
+                    indices = this.state.data.slice(this.state.offset , this.state.offset + this.state.perPage)
+            }else{
+                indices = this.state.data.slice(this.state.offset , this.state.data.length)
+            }
+            this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+    
+        })
+    }
+    }
     render() {
+
+        const popover = (
+            <Popover id="popover-basic">
+              <Popover.Body>
+              <label className=" form-label fw-bolder ">
+                      Jump Page :
+                    </label>
+                    <Form.Control size="sm" type="text" placeholder="Enter page" value={this.state.jumpPage} onChange={(e) => this.setState({jumpPage:e.target.value})} />
+
+                    <Button variant="outline-dark" onClick={this.jumpPageButtonOnClicked}>Jump Page</Button>
+              </Popover.Body>
+            </Popover>
+        );
+
         let renderContent = ""
         this.state.data.length > 0 ?  renderContent = 
         <Card bg="light" className="h-100">
@@ -124,7 +153,7 @@ class ImagePagination extends Component {
                         {this.state.imgData.map((img , key) =>(
                             <div className="col-sm-1 py-2" key = {key}>
                     
-                           <img key = {key} src = {"data:image/png;base64,"+img} alt = "Image Picture" width="50" height = "50"
+                           <img key = {key} src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"
                            onClick = {this.handleImageClick} />
                            </div>
                         ))}
@@ -150,6 +179,9 @@ class ImagePagination extends Component {
                             renderOnZeroPageCount={null}
                             forcePage = {this.state.currentPage}
                         />
+                          <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+                            <Button variant="outline-dark">Jump Page</Button>
+                            </OverlayTrigger>
                     </div>
                 </div>
                 </Card.Body>
