@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate'
-import { Card ,Popover, OverlayTrigger , Button , Form} from 'react-bootstrap';
+import { Card , Form} from 'react-bootstrap';
 import {getImageData} from '../../assets/api-client.js'
 import ImageModal from './ImageModal.js';
 
@@ -150,7 +150,7 @@ class ImagePagination extends Component {
                         {this.state.imgData.map((img , key) =>(
                             <div className="col-sm-1 py-2" key = {key}>
                     
-                           <img key = {key} src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"
+                           <img key = {key} className = "img-with-click" src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"
                            onClick = {this.handleImageClick} />
                            </div>
                         ))}

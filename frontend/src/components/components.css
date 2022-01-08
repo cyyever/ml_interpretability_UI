@@ -65,7 +65,9 @@
 
 }
 /**********************/
-
+.img-with-click{
+  cursor: pointer;
+}
 .modal-dialog-img{
   text-align:center;
   justify-content: center;
