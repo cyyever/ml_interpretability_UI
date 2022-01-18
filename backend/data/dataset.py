@@ -4,7 +4,7 @@ from cyy_torch_toolbox.dataset_collection import DatasetCollection
 from cyy_torch_toolbox.ml_type import MachineLearningPhase
 
 
-class dataset:
+class Dataset:
     dataset_collections: dict = {}
 
     @classmethod
@@ -48,7 +48,7 @@ class dataset:
 
 """ test driver"""
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    print(dataset.get_label_names("CIFAR10"))
 #    print(list(dataset.get_label_indices("CIFAR10" , 1)))
 #    labels = dataset.get_label_indices("CIFAR10", 1)[2]
