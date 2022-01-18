@@ -1,9 +1,10 @@
 import base64
 from io import BytesIO
 
-from data.dataset import Dataset
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from .dataset import Dataset
 
 # Create your views here.
 
