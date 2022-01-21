@@ -50,9 +50,10 @@ def training(
     config = DefaultConfig(dataset_name=dataset_name, model_name=model_name)
 
     if epoch is not None:
-        config.hyper_parameter_config.set_epoch(epoch)
+        config.hyper_parameter_config.epoch = epoch
     if learning_rate is not None:
-        config.hyper_parameter_config.set_learning_rate(learning_rate)
+        config.hyper_parameter_config.learning_rate = learning_rate
+        config.hyper_parameter_config.find_learning_rate = False
 
     queue = ProcessTaskQueue(worker_fun=__train_impl)
     queue.start()
