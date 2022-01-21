@@ -81,3 +81,10 @@ def get_training_info(task_id: int) -> tuple:
                 return (__training_info[task_id], True)
             return (__training_info[task_id], False)
         return (__training_info[task_id], True)
+
+
+
+
+if __name__ == "__main__":
+    id = training('CIFAR10' , 'densenet121' , 10 , 0.1)
+    get_training_info(id)

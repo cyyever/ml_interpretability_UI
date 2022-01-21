@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .dataset import Dataset
-
+from .model import get_supported_model_names
 # Create your views here.
 
 
@@ -52,3 +52,9 @@ class RawDataView(APIView):
             img_str = base64.b64encode(buffered.getvalue())
             return_data.append(img_str.decode("UTF-8"))
         return Response(return_data)
+
+
+class getModalView(APIView):
+    def get(self , request):
+        print(get_supported_model_names())
+        return Response(get_supported_model_names())
