@@ -1,4 +1,5 @@
 import threading
+import time
 
 from cyy_naive_lib.data_structure.process_task_queue import ProcessTaskQueue
 from cyy_torch_toolbox.default_config import DefaultConfig
@@ -6,8 +7,9 @@ from cyy_torch_toolbox.ml_type import (MachineLearningPhase,
                                        ModelExecutorHookPoint)
 
 
-def __train_impl(config, queue):
+def __train_impl(config, extra_arguments):
     try:
+        queue = extra_arguments["queue"]
         trainer = config.create_trainer()
 
         def after_epoch_hook(epoch):
@@ -30,7 +32,6 @@ def __train_impl(config, queue):
             ModelExecutorHookPoint.AFTER_EPOCH, "gather_info", after_epoch_hook
         )
         trainer.train()
-
         return True
     except BaseException:
         return False
@@ -58,7 +59,7 @@ def training(
     queue = ProcessTaskQueue(worker_fun=__train_impl)
     queue.start()
     queue.add_result_queue(name="info")
-    queue.add_task((config, queue))
+    queue.add_task(config)
     with __task_lock:
         task_id = __next_task_id
         __training_queues[task_id] = queue
@@ -83,8 +84,7 @@ def get_training_info(task_id: int) -> tuple:
         return (__training_info[task_id], True)
 
 
-
-
 if __name__ == "__main__":
-    id = training('CIFAR10' , 'densenet121' , 10 , 0.1)
-    get_training_info(id)
+    task_id = training("MNIST", "lenet5", 10, 0.1)
+    time.sleep(50)
+    get_training_info(task_id)
