@@ -2,6 +2,7 @@ import threading
 import time
 
 from cyy_naive_lib.data_structure.process_task_queue import ProcessTaskQueue
+from cyy_naive_lib.log import get_logger
 from cyy_torch_toolbox.default_config import DefaultConfig
 from cyy_torch_toolbox.ml_type import (MachineLearningPhase,
                                        ModelExecutorHookPoint)
@@ -12,7 +13,8 @@ def __train_impl(config, extra_arguments):
         queue = extra_arguments["queue"]
         trainer = config.create_trainer()
 
-        def after_epoch_hook(epoch):
+        def after_epoch_hook(**kwargs):
+            epoch = kwargs["epoch"]
             training_metric = trainer.performance_metric
             inference_metric = trainer.get_inferencer_performance_metric(
                 phase=MachineLearningPhase.Validation
@@ -32,9 +34,11 @@ def __train_impl(config, extra_arguments):
             ModelExecutorHookPoint.AFTER_EPOCH, "gather_info", after_epoch_hook
         )
         trainer.train()
-        return True
-    except BaseException:
-        return False
+        get_logger().info("stop trainer")
+        return
+    except BaseException as e:
+        get_logger().error("trainer has exception %s", e)
+        return
 
 
 __task_lock = threading.RLock()
@@ -56,9 +60,9 @@ def training(
         config.hyper_parameter_config.learning_rate = learning_rate
         config.hyper_parameter_config.find_learning_rate = False
 
-    queue = ProcessTaskQueue(worker_fun=__train_impl)
-    queue.start()
+    queue = ProcessTaskQueue(worker_num=1, use_manager=True)
     queue.add_result_queue(name="info")
+    queue.set_worker_fun(__train_impl)
     queue.add_task(config)
     with __task_lock:
         task_id = __next_task_id
@@ -87,5 +91,5 @@ def get_training_info(task_id: int) -> tuple:
 if __name__ == "__main__":
     task_id = training("MNIST", "lenet5", 10, 0.1)
     while True:
-      time.sleep(50)
-      print(get_training_info(task_id))
+        time.sleep(10)
+        print(get_training_info(task_id))
