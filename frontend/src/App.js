@@ -3,8 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React from 'react';
 import NavBar from './components/NavBar/NavBar';
-import OutputPanel from './components/ViewDataset/OutputPanel'
-import InputPanel from './components/InputPanel';
+import DataGalleryPanel from './components/ViewDataset/DataGalleryPanel'
+import RunModalPanel from './components/RunModal/RunModalPanel';
 import {BrowserRouter as Router , Routes , Route} from 'react-router-dom'
 import {Navbar} from 'react-bootstrap'
 function App() {
@@ -23,8 +23,8 @@ function App() {
         <Router>
         <NavBar/>
         <Routes>
-          <Route path='/' exact element= {<OutputPanel/>}/>
-          <Route path='/test' element = {<InputPanel/>}/>
+          <Route path='/' exact element= {<DataGalleryPanel/>}/>
+          <Route path='/run_modal' element = {<RunModalPanel/>}/>
         </Routes>
       </Router> 
       </div>

@@ -3,7 +3,7 @@ import { Col } from 'react-bootstrap'
 import './../components.css'
 import DatasetForm  from './DatasetForm'
 
-class OutputPanel extends Component {
+class DataGalleryPanel extends Component {
     render() {
         return (
             <Col className="offset-from-sideBar"> 
@@ -14,4 +14,4 @@ class OutputPanel extends Component {
     }
 }
 
-export default OutputPanel
+export default DataGalleryPanel

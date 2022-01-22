@@ -62,6 +62,16 @@ export const getImageData = (datasetName , datasetType , indices) => {
     console.log("failed to get image data");
     throw error;
   })
+};
 
+
+export const getModalName = () =>{
+  let url = URI + "/getModal"
+  return axios.get(url).then((response) =>{
+    return response.data;
+  }).catch((error) => {
+    console.log("failed to get modal name");
+    throw error;
+  })
 };
 

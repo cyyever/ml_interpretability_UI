@@ -86,5 +86,6 @@ def get_training_info(task_id: int) -> tuple:
 
 if __name__ == "__main__":
     task_id = training("MNIST", "lenet5", 10, 0.1)
-    time.sleep(50)
-    get_training_info(task_id)
+    while True:
+      time.sleep(50)
+      print(get_training_info(task_id))

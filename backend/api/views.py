@@ -56,5 +56,4 @@ class RawDataView(APIView):
 
 class getModalView(APIView):
     def get(self , request):
-        print(get_supported_model_names())
-        return Response(get_supported_model_names())
+        return Response({"modalName" : get_supported_model_names()})
