@@ -1,19 +1,20 @@
 import React, { Component } from "react";
-import {getDatasetName ,  getModalName} from "../../assets/api-client.js";
+import {getDatasetName ,  getModelName , startRunModel } from "../../assets/api-client.js";
 import { Card , Form  , Alert} from "react-bootstrap";
+import ModelGraphsDisplay from "./ModelGraphsDisplay"
 
-
-class RunModalForm extends Component {
+class RunModelForm extends Component {
   constructor() {
     super();
     this.state = {
       datasets:[],
       selectedDataset: "default",
-      modals: [],
-      selectedModal: "default",
+      models: [],
+      selectedModel: "default",
       numOfEpochs : "",
       learningRate : "",
       errorMessage : [],
+      modelId : "",
     };
   }
 
@@ -23,8 +24,8 @@ class RunModalForm extends Component {
       this.setState({ datasets: data.datasetName });
     });
 
-    getModalName().then((data) =>{
-      this.setState({modals : data.modalName})
+    getModelName().then((data) =>{
+      this.setState({models : data.modelName})
     })
   }
 
@@ -33,9 +34,9 @@ class RunModalForm extends Component {
     this.setState({ selectedDataset: data});
   }
 
-  handleModalInput = (event) =>{
+  handleModelInput = (event) =>{
     var data = event.target.value;
-    this.setState({selectedModal : data});
+    this.setState({selectedModel : data});
   }
 
   handleNumOfEpochs = (event) =>{
@@ -49,6 +50,7 @@ class RunModalForm extends Component {
 
   }
 
+
   handleFormSubmit = () =>{
     this.setState({errorMessage : []} , ()=>{
       var errorMessage = []
@@ -56,12 +58,12 @@ class RunModalForm extends Component {
         errorMessage.push("Please select Dataset")
       }
 
-      if(this.state.selectedModal === "default"){
-        errorMessage.push("Please select Modal")
+      if(this.state.selectedModel === "default"){
+        errorMessage.push("Please select Model")
       }
 
       if(!this.state.numOfEpochs){
-        errorMessage.push("Please enter number of Epochs for the modal")
+        errorMessage.push("Please enter number of Epochs for the model")
       }else{
         if( !(!isNaN(this.state.numOfEpochs) && this.state.numOfEpochs % 1 === 0)){
           errorMessage.push("Please enter the correct number of Epochs")
@@ -69,14 +71,18 @@ class RunModalForm extends Component {
       }
 
       if(!this.state.learningRate){
-        errorMessage.push("Please enter the learning rate for the modal")
+        errorMessage.push("Please enter the learning rate for the model")
       }else{
         if(isNaN(this.state.learningRate)){
         errorMessage.append("Please enter the correct learning rate")
         }
       }
-      if(errorMessage.length < 0){
+      if(errorMessage.length <= 0){
+        startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate).then((data) => {
+          this.setState({modelId : data.modelId})
 
+
+        })
       }else{
         this.setState({errorMessage : errorMessage})
       }
@@ -118,17 +124,17 @@ class RunModalForm extends Component {
 
                   <div className="col-sm-6 my-1">
                     <label className="form-label fw-bolder">
-                      Modal Name :
+                      Model Name :
                     </label>
                     <select
                       className="form-select form-select-solid form-select-sm"
-                      value={this.state.selectedModal}
-                      onChange={this.handleModalInput}
+                      value={this.state.selectedModel}
+                      onChange={this.handleModelInput}
                     >
                       <option value="default" hidden disabled>
-                        Select modal name
+                        Select model name
                       </option>
-                      {this.state.modals.map((dataset) => (
+                      {this.state.models.map((dataset) => (
                         <option key={dataset} value={dataset}>
                           {dataset}
                         </option>
@@ -164,11 +170,11 @@ class RunModalForm extends Component {
             </Card.Body>
           </Card>
         </div>
-
+        <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}/>
  
       </>
     );
   }
 }
 
-export default RunModalForm;
+export default RunModelForm;

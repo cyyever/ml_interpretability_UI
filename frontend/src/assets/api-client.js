@@ -65,13 +65,33 @@ export const getImageData = (datasetName , datasetType , indices) => {
 };
 
 
-export const getModalName = () =>{
-  let url = URI + "/getModal"
+export const getModelName = () =>{
+  let url = URI + "/getModel"
   return axios.get(url).then((response) =>{
     return response.data;
   }).catch((error) => {
-    console.log("failed to get modal name");
+    console.log("failed to get model name");
     throw error;
   })
 };
 
+export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate) =>{
+  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate 
+  return axios.get(url).then((response) => {
+    return response.data;
+  }).catch((error) => {
+    console.log("failed to start run model");
+    throw error;
+  })
+}
+
+export const getModelResult = (modelId , intervalId) => {
+  let url = URI + "/getModelResult?modelId=" + modelId
+  return axios.get(url).then((response) =>{
+    return response.data;
+  }).catch((error) => {
+    console.log("failed to get model result");
+    clearInterval(intervalId)
+    throw error;
+  })
+}

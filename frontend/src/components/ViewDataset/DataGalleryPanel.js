@@ -8,7 +8,6 @@ class DataGalleryPanel extends Component {
         return (
             <Col className="offset-from-sideBar"> 
             <DatasetForm/>
-
             </Col>
         )
     }

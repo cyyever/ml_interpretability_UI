@@ -9,8 +9,8 @@ export const SidebarData = [
     icon : <FaTable size={20}/>,
 },
 {
-    title:'Run Modal',
-    path:'/run_modal',
+    title:'Run Model',
+    path:'/run_model',
     icon : <FaHome size={20}/>,
 }
 

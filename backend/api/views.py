@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 
 from .dataset import Dataset
 from .model import get_supported_model_names
+from .trainer import training , get_training_info
 # Create your views here.
 
 
@@ -54,6 +55,21 @@ class RawDataView(APIView):
         return Response(return_data)
 
 
-class getModalView(APIView):
+class getModelView(APIView):
     def get(self , request):
-        return Response({"modalName" : get_supported_model_names()})
+        return Response({"modelName" : get_supported_model_names()})
+
+class startRunModelView(APIView):
+    def get(self , request):
+        model_name = request.query_params['modelName']
+        dataset_name = request.query_params['datasetName']
+        num_of_epochs = int(request.query_params['numOfEpochs'])
+        learning_rate = float(request.query_params['learningRate'])
+        id = training(dataset_name,model_name, num_of_epochs , learning_rate)
+        return Response({"modelId" : id})
+
+class getModelResultView(APIView):
+    def get(self , request):
+        id = int(request.query_params['modelId'])
+        result = get_training_info(id)
+        return Response(result[0])

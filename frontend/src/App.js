@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import NavBar from './components/NavBar/NavBar';
 import DataGalleryPanel from './components/ViewDataset/DataGalleryPanel'
-import RunModalPanel from './components/RunModal/RunModalPanel';
+import RunModalPanel from './components/RunModel/RunModelPanel';
 import {BrowserRouter as Router , Routes , Route} from 'react-router-dom'
 import {Navbar} from 'react-bootstrap'
 function App() {
@@ -24,7 +24,7 @@ function App() {
         <NavBar/>
         <Routes>
           <Route path='/' exact element= {<DataGalleryPanel/>}/>
-          <Route path='/run_modal' element = {<RunModalPanel/>}/>
+          <Route path='/run_model' element = {<RunModalPanel/>}/>
         </Routes>
       </Router> 
       </div>

@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import './../components.css'
 import { Col } from 'react-bootstrap'
-import RunModalForm from './RunModalForm'
-class RunModalPanel extends Component{
+import RunModelForm from './RunModelForm'
+class RunModelPanel extends Component{
 
     render(){
         return(
             <Col className="offset-from-sideBar"> 
-            <RunModalForm/>
+            <RunModelForm/>
             </Col>
         )
     }
@@ -15,7 +15,7 @@ class RunModalPanel extends Component{
   
 
 
-export default RunModalPanel
+export default RunModelPanel
 
 
 
