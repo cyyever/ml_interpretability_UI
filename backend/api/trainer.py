@@ -24,6 +24,7 @@ def __train_impl(config, extra_arguments):
             queue.put_result(
                 {
                     "epoch": epoch,
+                    "learning_rate": trainer.get_data("cur_learning_rates")[0],
                     "training_loss": training_metric.get_loss(epoch),
                     "validation_loss": inference_metric.get_loss(epoch),
                     "training_acc": training_metric.get_accuracy(epoch),
