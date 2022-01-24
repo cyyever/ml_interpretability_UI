@@ -1,8 +1,10 @@
 import threading
 import time
+import traceback
 
-from cyy_naive_lib.data_structure.process_task_queue import ProcessTaskQueue
 from cyy_naive_lib.log import get_logger
+from cyy_torch_toolbox.data_structure.torch_process_task_queue import \
+    TorchProcessTaskQueue
 from cyy_torch_toolbox.default_config import DefaultConfig
 from cyy_torch_toolbox.ml_type import (MachineLearningPhase,
                                        ModelExecutorHookPoint)
@@ -38,6 +40,7 @@ def __train_impl(config, extra_arguments):
         return
     except BaseException as e:
         get_logger().error("trainer has exception %s", e)
+        get_logger().error("traceback:%s", traceback.format_exc())
         return
 
 
@@ -60,7 +63,7 @@ def training(
         config.hyper_parameter_config.learning_rate = learning_rate
         config.hyper_parameter_config.find_learning_rate = False
 
-    queue = ProcessTaskQueue(worker_num=1, use_manager=True)
+    queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
     queue.set_worker_fun(__train_impl)
     queue.add_task(config)
