@@ -34,7 +34,10 @@ def __train_impl(config, extra_arguments):
             )
 
         trainer.append_named_hook(
-            ModelExecutorHookPoint.AFTER_EPOCH, "gather_info", after_epoch_hook
+            ModelExecutorHookPoint.AFTER_EPOCH,
+            "gather_info",
+            after_epoch_hook,
+            stripable=True,
         )
         trainer.train()
         get_logger().info("stop trainer")
@@ -93,7 +96,7 @@ def get_training_info(task_id: int) -> tuple:
 
 
 if __name__ == "__main__":
-    task_id = training("MNIST", "lenet5", 10, 0.1)
+    task_id = training("MNIST", "lenet5", 10, None)
     while True:
         time.sleep(10)
         print(get_training_info(task_id))
