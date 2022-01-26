@@ -144,7 +144,7 @@ class ModelGraphsDisplay extends Component {
             responsive: true,
             plugins: {
               legend: {
-                position: 'right',
+                position: 'top',
               },
               title: {
                 display: true,
@@ -157,7 +157,7 @@ class ModelGraphsDisplay extends Component {
             responsive: true,
             plugins: {
               legend: {
-                position: 'right',
+                position: 'top',
               },
               title: {
                 display: true,
@@ -170,7 +170,7 @@ class ModelGraphsDisplay extends Component {
             responsive: true,
             plugins: {
               legend: {
-                position: 'right',
+                position: 'top',
               },
               title: {
                 display: true,
