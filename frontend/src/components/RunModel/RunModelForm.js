@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {getDatasetName ,  getModelName , startRunModel } from "../../assets/api-client.js";
+import {getDatasetName ,  getModelName , startRunModel , getLearningRateScheduler} from "../../assets/api-client.js";
 import { Card , Form  , Alert} from "react-bootstrap";
 import ModelGraphsDisplay from "./ModelGraphsDisplay"
 
@@ -15,6 +15,8 @@ class RunModelForm extends Component {
       learningRate : "",
       errorMessage : [],
       modelId : "",
+      learningRateSchedulers : [],
+      selectedLearningRateScheduler : "",
     };
   }
 
@@ -26,6 +28,10 @@ class RunModelForm extends Component {
 
     getModelName().then((data) =>{
       this.setState({models : data.modelName})
+    })
+
+    getLearningRateScheduler().then((data) => {
+      this.setState({learningRateSchedulers : data.learning_rate_schedulers , selectedLearningRateScheduler : data.learning_rate_schedulers[0]})
     })
   }
 
@@ -49,7 +55,10 @@ class RunModelForm extends Component {
     this.setState({learningRate : data})
 
   }
-
+  handleLearningRateScheduler = (event) =>{
+    var data = event.target.value
+    this.setState({selectedLearningRateScheduler : data})
+  }
 
   handleFormSubmit = () =>{
     this.setState({errorMessage : []} , ()=>{
@@ -75,7 +84,8 @@ class RunModelForm extends Component {
       }
       
       if(errorMessage.length <= 0){
-        startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate).then((data) => {
+        startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate 
+          , this.state.selectedLearningRateScheduler).then((data) => {
           this.setState({modelId : data.modelId})
 
 
@@ -152,7 +162,25 @@ class RunModelForm extends Component {
                       Learning Rate :
                     </label>
                     <Form.Control size="sm" type="text" placeholder="Enter Learning Rate" value={this.state.learningRate} onChange={this.handleLearningRate} />
-                  </div>                  
+                  </div>     
+
+                  <div className="col-sm-6 my-1">
+                    <label className="form-label fw-bolder">
+                      Learning Rate Scheduler:
+                    </label>
+                    <select
+                      className="form-select form-select-solid form-select-sm"
+                      value={this.state.selectedLearningRateScheduler}
+                      onChange={this.handleLearningRateScheduler}
+                    >
+                    {this.state.learningRateSchedulers.map((learingRateScheduler) => (
+                        <option key={learingRateScheduler} value={learingRateScheduler}>
+                          {learingRateScheduler}
+                        </option>
+                      ))} 
+                      </select>
+                     </div>
+
                   </div>
                   <button type ="button" className="btn btn-dark my-2 " onClick={this.handleFormSubmit}>Submit</button>
                   { this.state.errorMessage.length > 0 ? <Alert variant="danger"><ul>

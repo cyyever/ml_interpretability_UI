@@ -75,8 +75,8 @@ export const getModelName = () =>{
   })
 };
 
-export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate) =>{
-  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate 
+export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate , learningRateSchedulerName) =>{
+  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate + "&learningRateSchedulerName=" + learningRateSchedulerName
   return axios.get(url).then((response) => {
     return response.data;
   }).catch((error) => {
@@ -93,5 +93,15 @@ export const getModelResult = (modelId , intervalId) => {
     console.log("failed to get model result");
     clearInterval(intervalId)
     throw error;
+  })
+}
+
+
+export const getLearningRateScheduler = () => {
+  let url = URI + "/getLearningRateScheduler"
+  return axios.get(url).then((response) =>{
+    return response.data
+  }).catch((error) =>{
+    console.log("failed to get learning rate scheduler")
   })
 }

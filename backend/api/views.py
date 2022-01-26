@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from .dataset import Dataset
 from .model import get_supported_model_names
 from .trainer import training , get_training_info
+from .learning_rate_scheduler import get_supported_learning_rate_scheduler_names
+from .optimizer import get_supported_optimizer_names
 # Create your views here.
 
 
@@ -64,13 +66,14 @@ class startRunModelView(APIView):
         model_name = request.query_params['modelName']
         dataset_name = request.query_params['datasetName']
         num_of_epochs = int(request.query_params['numOfEpochs'])
+        lr_scheduler_name = (request.query_params['learningRateSchedulerName'])
         learning_rate = None
         try:
             learning_rate = float(request.query_params['learningRate'])
         except Exception as e:
             print(e)
         print(learning_rate)
-        id = training(dataset_name,model_name, num_of_epochs , learning_rate)
+        id = training(dataset_name,model_name, num_of_epochs , learning_rate , lr_scheduler_name)
         return Response({"modelId" : id})
 
 class getModelResultView(APIView):
@@ -79,3 +82,11 @@ class getModelResultView(APIView):
         result = get_training_info(id)
         print(result)
         return Response(result[0])
+
+class getLearningRateSchedulerView(APIView):
+    def get(self ,request):
+        return Response({"learning_rate_schedulers" : get_supported_learning_rate_scheduler_names() })
+
+class getOptimizersView(APIView):
+    def get(self , request):
+        return Response({"optimizers" : get_supported_optimizer_names()})

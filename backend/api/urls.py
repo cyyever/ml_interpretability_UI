@@ -1,7 +1,8 @@
+from getopt import getopt
 from django.urls import path
 
 from .views import (RawDataView, DatasetLabelIndexView, DatasetLabelView, getModelView ,
-                    DatasetNameView ,startRunModelView , getModelResultView)
+                    DatasetNameView ,startRunModelView , getModelResultView , getOptimizersView , getLearningRateSchedulerView)
 
 urlpatterns = [
     path("api/datasetName", DatasetNameView.as_view(), name="dataset name"),
@@ -11,4 +12,6 @@ urlpatterns = [
     path("api/getModel" ,getModelView.as_view(), name = "model name"),
     path("api/startRunModel" ,startRunModelView.as_view(), name = "start model"),
     path("api/getModelResult" ,getModelResultView.as_view(), name = "get model result "),
+    path("api/getOptimizers", getOptimizersView.as_view(), name = "optimizers name"),
+    path("api/getLearningRateScheduler" , getLearningRateSchedulerView.as_view() , name = "learning rate scheduler name"),
 ]
