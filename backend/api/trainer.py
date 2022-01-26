@@ -55,7 +55,12 @@ __training_info: dict = {}
 
 
 def training(
-    dataset_name: str, model_name: str, epoch: int, learning_rate: float
+    dataset_name: str,
+    model_name: str,
+    epoch: int,
+    learning_rate: float,
+    lr_scheduler_name=None,
+    optimizer_name=None,
 ) -> int:
     """Start a new training job and return the task id."""
     global __next_task_id
@@ -66,6 +71,10 @@ def training(
     if learning_rate is not None:
         config.hyper_parameter_config.learning_rate = learning_rate
         config.hyper_parameter_config.find_learning_rate = False
+    if lr_scheduler_name is not None:
+        config.hyper_parameter_config.learning_rate_scheduler = lr_scheduler_name
+    if optimizer_name is not None:
+        config.hyper_parameter_config.optimizer_name = optimizer_name
 
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
