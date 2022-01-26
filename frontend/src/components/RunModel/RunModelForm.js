@@ -70,13 +70,10 @@ class RunModelForm extends Component {
         }
       }
 
-      if(!this.state.learningRate){
-        errorMessage.push("Please enter the learning rate for the model")
-      }else{
-        if(isNaN(this.state.learningRate)){
+      if(isNaN(this.state.learningRate)){
         errorMessage.append("Please enter the correct learning rate")
-        }
       }
+      
       if(errorMessage.length <= 0){
         startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate).then((data) => {
           this.setState({modelId : data.modelId})

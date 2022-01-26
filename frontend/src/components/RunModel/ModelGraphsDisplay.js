@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Spinner, Card} from 'react-bootstrap';
+import {Spinner, Card, Form} from 'react-bootstrap';
 import {getModelResult} from '../../assets/api-client'
 import {
     Chart as ChartJS,
@@ -34,7 +34,11 @@ class ModelGraphsDisplay extends Component {
             numOfEpochs : "",
             acc_result : [],
             loss_result : [],
+            learning_result : [],
             displayedSpinner:false,
+            accCheckBox :true,
+            lossCheckBox : true,
+            learningRateCheckBox : true,
         }     
     }
   
@@ -48,12 +52,15 @@ class ModelGraphsDisplay extends Component {
                         let train_acc = []
                         let valid_loss = []
                         let train_loss = []
+                        let learning_rates = []
                         if (data !== []){
                         data.map((result) => {
                             valid_acc.push(result.validation_acc)
                             train_acc.push(result.training_acc)
                             valid_loss.push(result.validation_loss)
                             train_loss.push(result.training_loss)
+                            learning_rates.push(result.learning_rate)
+
                         })
                         let labels = Array.from({length: data.length }, (_, i) => i + 1)
 
@@ -89,10 +96,22 @@ class ModelGraphsDisplay extends Component {
                             },
                         ]
 
+                        let learning_rate_result = [
+                          {
+                           label : 'Learning Rate',
+                           lineTension:0.4,
+                           data : learning_rates,
+                           borderColor: "#273974",
+
+                          }
+                    
+                      ]
+
                         let data_ = { labels : labels , datasets : acc_result}
                         let data__ = {labels : labels , datasets : loss_result}
-
-                        this.setState({acc_result: data_ , loss_result : data__})
+                        let data___ = {labels : labels , datasets : learning_rate_result}
+                                            
+                        this.setState({acc_result: data_ , loss_result : data__ , learning_result : data___})
                     }     
                         if(data.length === parseInt(this.state.numOfEpochs)){
                             this.setState({displayedSpinner : false})
@@ -108,6 +127,17 @@ class ModelGraphsDisplay extends Component {
         }
     }
 
+    handleAccCheckBox = () =>{
+      this.setState({accCheckBox : ! this.state.accCheckBox})
+    }
+
+    handleLossCheckBox = () =>{
+      this.setState({lossCheckBox : ! this.state.lossCheckBox})
+    }
+
+    handleLearningRateCheckBox = () =>{
+      this.setState({learningRateCheckBox : ! this.state.learningRateCheckBox})
+    }
     render() {
     
         const options_acc = {
@@ -136,6 +166,18 @@ class ModelGraphsDisplay extends Component {
             },
           };
 
+          const options_learningRate = {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'right',
+              },
+              title: {
+                display: true,
+                text: 'Learning Rate',
+              },
+            },
+          };
 
     let renderContent = ""
         this.state.data.length > 0 || this.state.displayedSpinner ?   renderContent = 
@@ -143,16 +185,40 @@ class ModelGraphsDisplay extends Component {
         <Card bg="light">
             <Card.Body>
             <div className = "row">
-            {this.state.displayedSpinner ?  
-                  <div className="col-12 form-spinner"><Spinner animation="border" /></div> : ""}
-                <div className = "col-6">
-            {this.state.data.length > 0 ?  
-                <Line data = {this.state.acc_result} options = {options_acc}/> : ""}
-                </div>
-                <div className = "col-6">
-            {this.state.data.length > 0 ?  
-                <Line data = {this.state.loss_result} options = {options_loss}/> : ""}
-                </div>
+            <div className = "col-12">
+                <Form>
+                  <div className = "row">
+                    <div className = "col-2">
+                    <Form.Switch label = "Accuracy" defaultChecked = {this.state.accCheckBox} onChange={this.handleAccCheckBox}/>
+                    </div>
+                    <div className = "col-2">
+                    <Form.Switch label = "Loss" defaultChecked = {this.state.lossCheckBox} onChange={this.handleLossCheckBox}/>
+                    </div>
+                    <div className = "col-2">
+                    <Form.Switch label = "Learning Rate" defaultChecked = {this.state.learningRateCheckBox} onChange={this.handleLearningRateCheckBox}/>
+                    </div>
+
+                    {this.state.displayedSpinner ?  
+                  <div className="col-2 form-spinner"><Spinner animation="border" /></div> : ""}
+                  </div>
+                </Form>
+              </div>
+            {this.state.data.length > 0 && this.state.accCheckBox  ?  
+            <div className = "col-6">
+                <Line data = {this.state.acc_result} options = {options_acc}/>
+            </div> : ""}
+               
+            {this.state.data.length > 0 && this.state.lossCheckBox ?  
+             <div className = "col-6">
+                <Line data = {this.state.loss_result} options = {options_loss}/> 
+               </div> : ""}
+            
+               {this.state.data.length > 0 && this.state.learningRateCheckBox?  
+             <div className = "col-6">
+                <Line data = {this.state.learning_result} options = {options_learningRate}/> 
+               </div> : ""}
+        
+
             </div>
             </Card.Body>
         </Card>

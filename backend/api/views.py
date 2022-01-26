@@ -64,7 +64,12 @@ class startRunModelView(APIView):
         model_name = request.query_params['modelName']
         dataset_name = request.query_params['datasetName']
         num_of_epochs = int(request.query_params['numOfEpochs'])
-        learning_rate = float(request.query_params['learningRate'])
+        learning_rate = None
+        try:
+            learning_rate = float(request.query_params['learningRate'])
+        except Exception as e:
+            print(e)
+        print(learning_rate)
         id = training(dataset_name,model_name, num_of_epochs , learning_rate)
         return Response({"modelId" : id})
 
@@ -72,4 +77,5 @@ class getModelResultView(APIView):
     def get(self , request):
         id = int(request.query_params['modelId'])
         result = get_training_info(id)
+        print(result)
         return Response(result[0])
