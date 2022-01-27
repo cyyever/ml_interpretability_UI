@@ -1,51 +1,45 @@
 import threading
 import time
-import traceback
 
 from cyy_naive_lib.log import get_logger
+from cyy_torch_algorithm.hydra.hydra_config import HyDRAConfig
 from cyy_torch_toolbox.data_structure.torch_process_task_queue import \
     TorchProcessTaskQueue
-from cyy_torch_toolbox.default_config import DefaultConfig
 from cyy_torch_toolbox.ml_type import (MachineLearningPhase,
                                        ModelExecutorHookPoint)
 
 
 def __train_impl(config, extra_arguments):
-    try:
-        queue = extra_arguments["queue"]
-        trainer = config.create_trainer()
+    queue = extra_arguments["queue"]
+    trainer = config.create_trainer()
 
-        def after_epoch_hook(**kwargs):
-            epoch = kwargs["epoch"]
-            training_metric = trainer.performance_metric
-            inference_metric = trainer.get_inferencer_performance_metric(
-                phase=MachineLearningPhase.Validation
-            )
-            queue.put_result(
-                {
-                    "epoch": epoch,
-                    "learning_rate": trainer.get_data("cur_learning_rates")[0],
-                    "training_loss": training_metric.get_loss(epoch),
-                    "validation_loss": inference_metric.get_loss(epoch),
-                    "training_acc": training_metric.get_accuracy(epoch),
-                    "validation_acc": inference_metric.get_accuracy(epoch),
-                },
-                queue_name="info",
-            )
-
-        trainer.append_named_hook(
-            ModelExecutorHookPoint.AFTER_EPOCH,
-            "gather_info",
-            after_epoch_hook,
-            stripable=True,
+    def after_epoch_hook(**kwargs):
+        epoch = kwargs["epoch"]
+        training_metric = trainer.performance_metric
+        inference_metric = trainer.get_inferencer_performance_metric(
+            phase=MachineLearningPhase.Validation
         )
-        trainer.train()
-        get_logger().info("stop trainer")
-        return
-    except BaseException as e:
-        get_logger().error("trainer has exception %s", e)
-        get_logger().error("traceback:%s", traceback.format_exc())
-        return
+        queue.put_result(
+            {
+                "epoch": epoch,
+                "learning_rate": trainer.get_data("cur_learning_rates")[0],
+                "training_loss": training_metric.get_loss(epoch),
+                "validation_loss": inference_metric.get_loss(epoch),
+                "training_acc": training_metric.get_accuracy(epoch),
+                "validation_acc": inference_metric.get_accuracy(epoch),
+            },
+            queue_name="info",
+        )
+
+    trainer.append_named_hook(
+        ModelExecutorHookPoint.AFTER_EPOCH,
+        "gather_info",
+        after_epoch_hook,
+        stripable=True,
+    )
+    trainer.train()
+    get_logger().info("stop trainer")
+    return
 
 
 __task_lock = threading.RLock()
@@ -64,7 +58,7 @@ def training(
 ) -> int:
     """Start a new training job and return the task id."""
     global __next_task_id
-    config = DefaultConfig(dataset_name=dataset_name, model_name=model_name)
+    config = HyDRAConfig(dataset_name=dataset_name, model_name=model_name)
 
     if epoch is not None:
         config.hyper_parameter_config.epoch = epoch
@@ -73,8 +67,9 @@ def training(
         config.hyper_parameter_config.find_learning_rate = False
     if lr_scheduler_name is not None:
         config.hyper_parameter_config.learning_rate_scheduler = lr_scheduler_name
-    if optimizer_name is not None:
-        config.hyper_parameter_config.optimizer_name = optimizer_name
+    # if optimizer_name is not None:
+    # config.hyper_parameter_config.optimizer_name = optimizer_name
+    config.hyper_parameter_config.optimizer_name = "SGD"
 
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
@@ -105,7 +100,7 @@ def get_training_info(task_id: int) -> tuple:
 
 
 if __name__ == "__main__":
-    task_id = training("MNIST", "lenet5", 10, None)
+    task_id = training("MNIST", "lenet5", 1, 0.1)
     while True:
         time.sleep(10)
         print(get_training_info(task_id))
