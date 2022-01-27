@@ -54,7 +54,7 @@ class ModelGraphsDisplay extends Component {
                         let train_loss = []
                         let learning_rates = []
                         if (data !== []){
-                        data.map((result) => {
+                        data.forEach((result) => {
                             valid_acc.push(result.validation_acc)
                             train_acc.push(result.training_acc)
                             valid_loss.push(result.validation_loss)
