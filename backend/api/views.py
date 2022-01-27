@@ -66,14 +66,15 @@ class startRunModelView(APIView):
         model_name = request.query_params['modelName']
         dataset_name = request.query_params['datasetName']
         num_of_epochs = int(request.query_params['numOfEpochs'])
-        lr_scheduler_name = (request.query_params['learningRateSchedulerName'])
+        lr_scheduler_name = request.query_params['learningRateSchedulerName']
+        optimizer = request.query_params['optimizer']
         learning_rate = None
         try:
             learning_rate = float(request.query_params['learningRate'])
         except Exception as e:
             print(e)
-        print(learning_rate)
-        id = training(dataset_name,model_name, num_of_epochs , learning_rate , lr_scheduler_name)
+        print(optimizer)
+        id = training(dataset_name,model_name, num_of_epochs , learning_rate , lr_scheduler_name , optimizer)
         return Response({"modelId" : id})
 
 class getModelResultView(APIView):

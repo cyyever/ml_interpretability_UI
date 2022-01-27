@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {getDatasetName ,  getModelName , startRunModel , getLearningRateScheduler} from "../../assets/api-client.js";
+import {getDatasetName ,  getModelName , startRunModel , getLearningRateScheduler , getOptimizers} from "../../assets/api-client.js";
 import { Card , Form  , Alert} from "react-bootstrap";
 import ModelGraphsDisplay from "./ModelGraphsDisplay"
 
@@ -17,6 +17,8 @@ class RunModelForm extends Component {
       modelId : "",
       learningRateSchedulers : [],
       selectedLearningRateScheduler : "",
+      optimizers : [],
+      selectedOptimizers : ""
     };
   }
 
@@ -32,6 +34,10 @@ class RunModelForm extends Component {
 
     getLearningRateScheduler().then((data) => {
       this.setState({learningRateSchedulers : data.learning_rate_schedulers , selectedLearningRateScheduler : data.learning_rate_schedulers[0]})
+    })
+
+    getOptimizers().then((data) =>{
+      this.setState({optimizers : data.optimizers , selectedOptimizers : data.optimizers[0]})
     })
   }
 
@@ -60,6 +66,10 @@ class RunModelForm extends Component {
     this.setState({selectedLearningRateScheduler : data})
   }
 
+  handleOptimizer = (event) =>{
+    var data = event.target.value
+    this.setState({selectedOptimizers : data})
+  }
   handleFormSubmit = () =>{
     this.setState({errorMessage : []} , ()=>{
       var errorMessage = []
@@ -85,7 +95,7 @@ class RunModelForm extends Component {
       
       if(errorMessage.length <= 0){
         startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate 
-          , this.state.selectedLearningRateScheduler).then((data) => {
+          , this.state.selectedLearningRateScheduler , this.state.selectedOptimizers).then((data) => {
           this.setState({modelId : data.modelId})
 
 
@@ -180,6 +190,24 @@ class RunModelForm extends Component {
                       ))} 
                       </select>
                      </div>
+
+                     <div className="col-sm-6 my-1">
+                    <label className="form-label fw-bolder">
+                      Optimizer:
+                    </label>
+                    <select
+                      className="form-select form-select-solid form-select-sm"
+                      value={this.state.selectedOptimizers}
+                      onChange={this.handleOptimizer}
+                    >
+                    {this.state.optimizers.map((optimizer) => (
+                        <option key={optimizer} value={optimizer}>
+                          {optimizer}
+                        </option>
+                      ))} 
+                      </select>
+                     </div>
+
 
                   </div>
                   <button type ="button" className="btn btn-dark my-2 " onClick={this.handleFormSubmit}>Submit</button>
