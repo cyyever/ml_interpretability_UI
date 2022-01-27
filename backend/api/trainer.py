@@ -39,7 +39,6 @@ def __train_impl(config, extra_arguments):
     )
     trainer.train()
     get_logger().info("stop trainer")
-    return
 
 
 __task_lock = threading.RLock()
