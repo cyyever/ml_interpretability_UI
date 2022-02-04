@@ -1,19 +1,26 @@
 import threading
 import time
 
+import pytest
 from cyy_naive_lib.log import get_logger
-from cyy_torch_algorithm.hydra.hydra_config import HyDRAConfig
+from cyy_private_torch_algorithm.lean_hydra.lean_hydra_config import \
+    LeanHyDRAConfig
 from cyy_torch_toolbox.data_structure.torch_process_task_queue import \
     TorchProcessTaskQueue
 from cyy_torch_toolbox.ml_type import (MachineLearningPhase,
                                        ModelExecutorHookPoint)
+from cyy_torch_toolbox.reproducible_env import global_reproducible_env
 
 
 def __train_impl(config, extra_arguments):
     queue = extra_arguments["queue"]
     trainer = config.create_trainer()
 
+    second_run = False
+
     def after_epoch_hook(**kwargs):
+        if not second_run:
+            return
         epoch = kwargs["epoch"]
         training_metric = trainer.performance_metric
         inference_metric = trainer.get_inferencer_performance_metric(
@@ -37,7 +44,33 @@ def __train_impl(config, extra_arguments):
         after_epoch_hook,
         stripable=True,
     )
+    get_logger().info("begin train")
     trainer.train()
+
+    global_reproducible_env.disable()
+    previous_training_loss = {
+        epoch: trainer.performance_metric.get_loss(epoch).cpu()
+        for epoch in range(1, trainer.hyper_parameter.epoch + 1)
+    }
+    tester = trainer.get_inferencer(phase=MachineLearningPhase.Test, copy_model=True)
+    tester.disable_logger()
+    test_gradient = tester.get_gradient()
+    global_reproducible_env.load_last_seed()
+    global_reproducible_env.enable()
+    trainer, hook = config.create_trainer_and_hook(test_gradient=test_gradient)
+    # hook.set_computed_indices([1, 2])
+    trainer.train()
+    training_loss = {
+        epoch: trainer.performance_metric.get_loss(epoch).cpu()
+        for epoch in range(1, trainer.hyper_parameter.epoch + 1)
+    }
+    second_run = True
+
+    for epoch in training_loss:
+        assert pytest.approx(
+            training_loss[epoch], previous_training_loss[epoch], abs=1e-6
+        )
+
     get_logger().info("stop trainer")
 
 
@@ -57,7 +90,7 @@ def training(
 ) -> int:
     """Start a new training job and return the task id."""
     global __next_task_id
-    config = HyDRAConfig(dataset_name=dataset_name, model_name=model_name)
+    config = LeanHyDRAConfig(dataset_name=dataset_name, model_name=model_name)
 
     if epoch is not None:
         config.hyper_parameter_config.epoch = epoch
@@ -69,6 +102,7 @@ def training(
     # if optimizer_name is not None:
     # config.hyper_parameter_config.optimizer_name = optimizer_name
     config.hyper_parameter_config.optimizer_name = "SGD"
+    config.make_reproducible_env = True
 
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
