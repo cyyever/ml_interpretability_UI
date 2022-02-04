@@ -16,11 +16,7 @@ def __train_impl(config, extra_arguments):
     queue = extra_arguments["queue"]
     trainer = config.create_trainer()
 
-    second_run = False
-
     def after_epoch_hook(**kwargs):
-        if not second_run:
-            return
         epoch = kwargs["epoch"]
         training_metric = trainer.performance_metric
         inference_metric = trainer.get_inferencer_performance_metric(
@@ -38,12 +34,6 @@ def __train_impl(config, extra_arguments):
             queue_name="info",
         )
 
-    trainer.append_named_hook(
-        ModelExecutorHookPoint.AFTER_EPOCH,
-        "gather_info",
-        after_epoch_hook,
-        stripable=True,
-    )
     get_logger().info("begin train")
     trainer.train()
 
@@ -59,12 +49,17 @@ def __train_impl(config, extra_arguments):
     global_reproducible_env.enable()
     trainer, hook = config.create_trainer_and_hook(test_gradient=test_gradient)
     # hook.set_computed_indices([1, 2])
+    trainer.append_named_hook(
+        ModelExecutorHookPoint.AFTER_EPOCH,
+        "gather_info",
+        after_epoch_hook,
+        stripable=True,
+    )
     trainer.train()
     training_loss = {
         epoch: trainer.performance_metric.get_loss(epoch).cpu()
         for epoch in range(1, trainer.hyper_parameter.epoch + 1)
     }
-    second_run = True
 
     for epoch in training_loss:
         assert pytest.approx(
