@@ -9,3 +9,4 @@ torchvision
 git+https://github.com/cyyever/naive_python_lib.git@main
 git+https://github.com/cyyever/torch_toolbox.git@main
 git+https://github.com/cyyever/private_torch_algorithm.git@main
+git+https://github.com/cyyever/torch_algorithm.git@main
