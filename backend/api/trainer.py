@@ -147,7 +147,7 @@ def get_training_info(task_id: int) -> tuple:
 
 
 if __name__ == "__main__":
-    task_id = training("MNIST", "lenet5", 1, 0.1, use_hydra=False)
+    task_id = training("MNIST", "lenet5", 1, 0.1, use_hydra=True)
     while True:
         time.sleep(1)
         info, flag = get_training_info(task_id)
