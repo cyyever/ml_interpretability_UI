@@ -3,6 +3,9 @@ import {getDatasetName ,  getModelName , startRunModel , getLearningRateSchedule
 import { Card , Form  , Alert} from "react-bootstrap";
 import ModelGraphsDisplay from "./ModelGraphsDisplay"
 
+const modelType = ['Regular' , 'HYDRA'];
+
+const optimizersForHYDRA = ["SGD"]
 class RunModelForm extends Component {
   constructor() {
     super();
@@ -18,7 +21,9 @@ class RunModelForm extends Component {
       learningRateSchedulers : [],
       selectedLearningRateScheduler : "",
       optimizers : [],
-      selectedOptimizers : ""
+      selectedOptimizers : "",
+      selectedModelType : modelType[0],
+      isOptimizerDisabled : false,
     };
   }
 
@@ -70,6 +75,17 @@ class RunModelForm extends Component {
     var data = event.target.value
     this.setState({selectedOptimizers : data})
   }
+
+  handleModelTypeInput = (event) =>{
+    var modelType = event.target.value
+   if (modelType === "HYDRA"){
+     this.setState({optimizers : optimizersForHYDRA , selectedOptimizers : optimizersForHYDRA[0], selectedModelType : modelType})
+   }else{
+    getOptimizers().then((data) =>{
+      this.setState({optimizers : data.optimizers , selectedOptimizers : data.optimizers[0],  selectedModelType : modelType})
+    })
+   }
+  }
   handleFormSubmit = () =>{
     this.setState({errorMessage : []} , ()=>{
       var errorMessage = []
@@ -118,6 +134,25 @@ class RunModelForm extends Component {
                 <div className = "col-6">
                 <form>
                 <div className="form-group row">
+
+                <div className="col-sm-6 my-1">
+                    <label className="form-label fw-bolder">
+                      Model Type:
+                    </label>
+                    <select
+                      className="form-select form-select-solid form-select-sm"
+                      value={this.state.selectedModelType}
+                      onChange={this.handleModelTypeInput}
+                    >
+                      {modelType.map((modeltype) => (
+                        <option key={modeltype} value={modeltype}>
+                          {modeltype}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+
                   <div className="col-sm-6 my-1">
                     <label className="form-label fw-bolder">
                       Dataset Name :
