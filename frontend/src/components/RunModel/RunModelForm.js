@@ -3,7 +3,15 @@ import {getDatasetName ,  getModelName , startRunModel , getLearningRateSchedule
 import { Card , Form  , Alert} from "react-bootstrap";
 import ModelGraphsDisplay from "./ModelGraphsDisplay"
 
-const modelType = ['Regular' , 'HYDRA'];
+const enableHydra = [
+  {
+  name : 'Disable',
+  value : false
+} , {
+  name : 'Enable',
+  value : true
+}
+];
 
 const optimizersForHYDRA = ["SGD"]
 class RunModelForm extends Component {
@@ -22,7 +30,7 @@ class RunModelForm extends Component {
       selectedLearningRateScheduler : "",
       optimizers : [],
       selectedOptimizers : "",
-      selectedModelType : modelType[0],
+      selectedEnableHydra : enableHydra[0].value,
       isOptimizerDisabled : false,
     };
   }
@@ -76,13 +84,13 @@ class RunModelForm extends Component {
     this.setState({selectedOptimizers : data})
   }
 
-  handleModelTypeInput = (event) =>{
-    var modelType = event.target.value
-   if (modelType === "HYDRA"){
-     this.setState({optimizers : optimizersForHYDRA , selectedOptimizers : optimizersForHYDRA[0], selectedModelType : modelType})
+  handleEnableHydraInput = (event) =>{
+    var isEnable = (event.target.value === 'true')
+   if (isEnable){
+     this.setState({optimizers : optimizersForHYDRA , selectedOptimizers : optimizersForHYDRA[0], selectedEnableHydra : isEnable})
    }else{
     getOptimizers().then((data) =>{
-      this.setState({optimizers : data.optimizers , selectedOptimizers : data.optimizers[0],  selectedModelType : modelType})
+      this.setState({optimizers : data.optimizers , selectedOptimizers : data.optimizers[0],  selectedEnableHydra : isEnable})
     })
    }
   }
@@ -110,8 +118,9 @@ class RunModelForm extends Component {
       }
       
       if(errorMessage.length <= 0){
+        console.log(this.selectedEnableHydra)
         startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate 
-          , this.state.selectedLearningRateScheduler , this.state.selectedOptimizers).then((data) => {
+          , this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra).then((data) => {
           this.setState({modelId : data.modelId})
 
 
@@ -137,16 +146,16 @@ class RunModelForm extends Component {
 
                 <div className="col-sm-6 my-1">
                     <label className="form-label fw-bolder">
-                      Model Type:
+                      HYDRA:
                     </label>
                     <select
                       className="form-select form-select-solid form-select-sm"
-                      value={this.state.selectedModelType}
-                      onChange={this.handleModelTypeInput}
+                      value={this.state.selectedEnableHydra}
+                      onChange={this.handleEnableHydraInput}
                     >
-                      {modelType.map((modeltype) => (
-                        <option key={modeltype} value={modeltype}>
-                          {modeltype}
+                      {enableHydra.map((enableHydra_) => (
+                        <option key={enableHydra_.value} value={enableHydra_.value}>
+                          {enableHydra_.name}
                         </option>
                       ))}
                     </select>

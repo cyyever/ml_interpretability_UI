@@ -69,12 +69,14 @@ class startRunModelView(APIView):
         lr_scheduler_name = request.query_params['learningRateSchedulerName']
         optimizer = request.query_params['optimizer']
         learning_rate = None
+        use_hydra = (request.query_params['useHydra'] is "true")
+        print(use_hydra)
+        print(type(use_hydra))
         try:
             learning_rate = float(request.query_params['learningRate'])
         except Exception as e:
             print(e)
-        print(optimizer)
-        id = training(dataset_name,model_name, num_of_epochs , learning_rate , lr_scheduler_name , optimizer)
+        id = training(dataset_name,model_name, num_of_epochs , learning_rate , use_hydra , lr_scheduler_name , optimizer )
         return Response({"modelId" : id})
 
 class getModelResultView(APIView):
