@@ -36,12 +36,14 @@ def __train_impl(task, extra_arguments):
             queue_name="info",
         )
 
-    config.make_reproducible_env = False
-    trainer = config.create_trainer()
-    lr = trainer.hyper_parameter.get_learning_rate(trainer)
-    config.hyper_parameter_config.set_learning_rate(lr)
+    # config.make_reproducible_env = False
     if use_hydra:
         config.make_reproducible_env = True
+    trainer = config.create_trainer()
+    lr = trainer.hyper_parameter.get_learning_rate(trainer)
+    config.hyper_parameter_config.learning_rate = lr
+    config.hyper_parameter_config.find_learning_rate = False
+    global_reproducible_env.disable()
     trainer = config.create_trainer()
 
     get_logger().info("begin train")

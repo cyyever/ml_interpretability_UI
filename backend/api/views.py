@@ -71,12 +71,11 @@ class startRunModelView(APIView):
         num_of_epochs = int(request.query_params["numOfEpochs"])
         lr_scheduler_name = request.query_params["learningRateSchedulerName"]
         optimizer = request.query_params["optimizer"]
-        learning_rate = None
         use_hydra = request.query_params["useHydra"] == "true"
-        try:
+        if request.query_params["learningRate"]:
             learning_rate = float(request.query_params["learningRate"])
-        except Exception as e:
-            print(e)
+        else:
+            learning_rate = None
         id = training(
             dataset_name,
             model_name,
