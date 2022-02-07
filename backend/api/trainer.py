@@ -16,11 +16,9 @@ from cyy_torch_toolbox.reproducible_env import global_reproducible_env
 def __train_impl(task, extra_arguments):
     config, use_hydra = task
     queue = extra_arguments["queue"]
-    if use_hydra:
-        config.make_reproducible_env = True
-    trainer = config.create_trainer()
 
     def after_epoch_hook(**kwargs):
+        trainer = kwargs["model_executor"]
         epoch = kwargs["epoch"]
         training_metric = trainer.performance_metric
         inference_metric = trainer.get_inferencer_performance_metric(
@@ -37,6 +35,14 @@ def __train_impl(task, extra_arguments):
             },
             queue_name="info",
         )
+
+    config.make_reproducible_env = False
+    trainer = config.create_trainer()
+    lr = trainer.hyper_parameter.get_learning_rate(trainer)
+    config.hyper_parameter_config.set_learning_rate(lr)
+    if use_hydra:
+        config.make_reproducible_env = True
+    trainer = config.create_trainer()
 
     get_logger().info("begin train")
 

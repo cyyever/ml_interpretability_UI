@@ -5,10 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .dataset import Dataset
+from .learning_rate_scheduler import \
+    get_supported_learning_rate_scheduler_names
 from .model import get_supported_model_names
-from .trainer import training , get_training_info
-from .learning_rate_scheduler import get_supported_learning_rate_scheduler_names
 from .optimizer import get_supported_optimizer_names
+from .trainer import get_training_info, training
+
 # Create your views here.
 
 
@@ -58,38 +60,50 @@ class RawDataView(APIView):
 
 
 class getModelView(APIView):
-    def get(self , request):
-        return Response({"modelName" : get_supported_model_names()})
+    def get(self, request):
+        return Response({"modelName": get_supported_model_names()})
+
 
 class startRunModelView(APIView):
-    def get(self , request):
-        model_name = request.query_params['modelName']
-        dataset_name = request.query_params['datasetName']
-        num_of_epochs = int(request.query_params['numOfEpochs'])
-        lr_scheduler_name = request.query_params['learningRateSchedulerName']
-        optimizer = request.query_params['optimizer']
+    def get(self, request):
+        model_name = request.query_params["modelName"]
+        dataset_name = request.query_params["datasetName"]
+        num_of_epochs = int(request.query_params["numOfEpochs"])
+        lr_scheduler_name = request.query_params["learningRateSchedulerName"]
+        optimizer = request.query_params["optimizer"]
         learning_rate = None
-        use_hydra = (request.query_params['useHydra'] is "true")
-        print(use_hydra)
-        print(type(use_hydra))
+        use_hydra = request.query_params["useHydra"] == "true"
         try:
-            learning_rate = float(request.query_params['learningRate'])
+            learning_rate = float(request.query_params["learningRate"])
         except Exception as e:
             print(e)
-        id = training(dataset_name,model_name, num_of_epochs , learning_rate , use_hydra , lr_scheduler_name , optimizer )
-        return Response({"modelId" : id})
+        id = training(
+            dataset_name,
+            model_name,
+            num_of_epochs,
+            learning_rate,
+            use_hydra,
+            lr_scheduler_name,
+            optimizer,
+        )
+        return Response({"modelId": id})
+
 
 class getModelResultView(APIView):
-    def get(self , request):
-        id = int(request.query_params['modelId'])
+    def get(self, request):
+        id = int(request.query_params["modelId"])
         result = get_training_info(id)
         print(result)
         return Response(result[0])
 
+
 class getLearningRateSchedulerView(APIView):
-    def get(self ,request):
-        return Response({"learning_rate_schedulers" : get_supported_learning_rate_scheduler_names() })
+    def get(self, request):
+        return Response(
+            {"learning_rate_schedulers": get_supported_learning_rate_scheduler_names()}
+        )
+
 
 class getOptimizersView(APIView):
-    def get(self , request):
-        return Response({"optimizers" : get_supported_optimizer_names()})
+    def get(self, request):
+        return Response({"optimizers": get_supported_optimizer_names()})
