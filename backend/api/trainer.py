@@ -62,7 +62,7 @@ def __train_impl(task, extra_arguments):
         test_gradient = tester.get_gradient()
         global_reproducible_env.load_last_seed()
         global_reproducible_env.enable()
-        trainer, _ = config.create_trainer_and_hook(test_gradient=test_gradient)
+        trainer, hook = config.create_trainer_and_hook(test_gradient=test_gradient)
         trainer.append_named_hook(
             ModelExecutorHookPoint.AFTER_EPOCH,
             "gather_info",
@@ -79,6 +79,10 @@ def __train_impl(task, extra_arguments):
             assert pytest.approx(
                 training_loss[epoch], previous_training_loss[epoch], abs=1e-6
             )
+        queue.put_result(
+            {"contribution": hook.contributions.cpu().tolist()},
+            queue_name="info",
+        )
     else:
         trainer.append_named_hook(
             ModelExecutorHookPoint.AFTER_EPOCH,
