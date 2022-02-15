@@ -81,7 +81,7 @@ def __train_impl(task, extra_arguments):
             )
         queue.put_result(
             {"contribution": hook.contributions.cpu().tolist()},
-            queue_name="info",
+            queue_name="contribution",
         )
     else:
         trainer.append_named_hook(
@@ -100,6 +100,7 @@ __task_lock = threading.RLock()
 __next_task_id = 0
 __training_queues: dict = {}
 __training_info: dict = {}
+__contribution: dict = {}
 
 
 def training(
@@ -132,36 +133,53 @@ def training(
 
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
+    queue.add_result_queue(name="contribution")
     queue.set_worker_fun(__train_impl)
     queue.add_task((config, use_hydra))
     with __task_lock:
         task_id = __next_task_id
         __training_queues[task_id] = queue
         __training_info[task_id] = []
+        __contribution[task_id] = []
         __next_task_id += 1
         return task_id
 
 
 def get_training_info(task_id: int) -> tuple:
-    """Give task_id, return the loss & acc of model, and a flag indicating the training has finished"""
+    """Give task_id, return the loss & acc of model, contribution and a flag indicating the training has finished"""
     with __task_lock:
         queue = __training_queues.get(task_id, None)
+        finish_flag = True
         if queue is not None:
+            finish_flag = False
             while queue.has_result(queue_name="info"):
                 epoch_info = queue.get_result(queue_name="info")
                 __training_info[task_id].append(epoch_info)
+            if queue.has_result(queue_name="contribution"):
+                __contribution[task_id].append(
+                    queue.get_result(queue_name="contribution")
+                )
             if queue.has_result():
                 queue.release()
                 del __training_queues[task_id]
-                return (__training_info[task_id], True)
-            return (__training_info[task_id], False)
-        return (__training_info[task_id], True)
+                finish_flag = True
+        return (
+            __training_info[task_id],
+            __contribution.get(task_id, None),
+            finish_flag,
+        )
+
+
+def remove_training_task(task_id):
+    __training_queues.pop(task_id, None)
+    __training_info.pop(task_id, None)
+    __contribution.pop(task_id, None)
 
 
 if __name__ == "__main__":
     task_id = training("MNIST", "lenet5", 1, 0.1, use_hydra=True)
     while True:
         time.sleep(1)
-        info, flag = get_training_info(task_id)
+        info, contribution, flag = get_training_info(task_id)
         if flag:
             break
