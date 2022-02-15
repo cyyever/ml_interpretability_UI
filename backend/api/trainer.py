@@ -76,8 +76,8 @@ def __train_impl(task, extra_arguments):
         }
 
         for epoch in training_loss:
-            assert pytest.approx(
-                training_loss[epoch], previous_training_loss[epoch], abs=1e-6
+            assert training_loss[epoch] == pytest.approx(
+                previous_training_loss[epoch], abs=1e-6
             )
         queue.put_result(
             {"contribution": hook.contributions.cpu().tolist()},
