@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import {getDatasetName ,  getModelName , startRunModel , getLearningRateScheduler , getOptimizers} from "../../assets/api-client.js";
 import { Card , Form  , Alert} from "react-bootstrap";
-import ModelGraphsDisplay from "./ModelGraphsDisplay"
-
+import ResultDisplay from "./ResultDisplay.js";
 
 const optimizersForHYDRA = ["SGD"]
 class RunModelForm extends Component {
@@ -246,8 +245,7 @@ class RunModelForm extends Component {
             </Card.Body>
           </Card>
         </div>
-        <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}/>
- 
+        <ResultDisplay key= {this.state.modelId} modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs} isHYDRA = {this.state.selectedEnableHydra}/>
       </>
     );
   }

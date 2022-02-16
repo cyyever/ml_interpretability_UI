@@ -45,7 +45,7 @@ class ModelGraphsDisplay extends Component {
     componentDidMount(){
         if(this.props.modelId !== undefined && this.props.modelId !== ""){
         this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , displayedSpinner : true} , ()=>{
-            var id = setInterval(() => {
+          var id = setInterval(() => {
                 getModelResult(this.state.modelId , this.state.intervalId).then((data) =>{
                     this.setState({data : data} , () =>{
                         let valid_acc = []
@@ -114,7 +114,7 @@ class ModelGraphsDisplay extends Component {
                         this.setState({acc_result: data_ , loss_result : data__ , learning_result : data___})
                     }     
                         if(data.length === parseInt(this.state.numOfEpochs)){
-                            this.setState({displayedSpinner : false})
+                          this.setState({displayedSpinner : false})
                             clearInterval(this.state.intervalId)
 
 
@@ -138,6 +138,7 @@ class ModelGraphsDisplay extends Component {
     handleLearningRateCheckBox = () =>{
       this.setState({learningRateCheckBox : ! this.state.learningRateCheckBox})
     }
+
     render() {
     
         const options_acc = {
@@ -182,10 +183,8 @@ class ModelGraphsDisplay extends Component {
     let renderContent = ""
         this.state.data.length > 0 || this.state.displayedSpinner ?   renderContent = 
         <>
-        <Card bg="light">
-            <Card.Body>
-            <div className = "row">
-            <div className = "col-12">
+            <div className = "row my-2">
+            <div className = "col-12 py-2 mx-2">
                 <Form>
                   <div className = "row">
                     <div className = "col-2">
@@ -220,8 +219,6 @@ class ModelGraphsDisplay extends Component {
         
 
             </div>
-            </Card.Body>
-        </Card>
         </>
 
         : renderContent = ""
