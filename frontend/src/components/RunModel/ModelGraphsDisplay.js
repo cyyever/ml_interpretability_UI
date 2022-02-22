@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Spinner, Card, Form} from 'react-bootstrap';
-import {getModelResult} from '../../assets/api-client'
+import {Spinner, Form} from 'react-bootstrap';
+import {getModelResult , getContributionResult} from '../../assets/api-client'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -116,6 +116,10 @@ class ModelGraphsDisplay extends Component {
                         if(data.length === parseInt(this.state.numOfEpochs)){
                           this.setState({displayedSpinner : false})
                             clearInterval(this.state.intervalId)
+                            getContributionResult(this.state.modelId).then((data) =>{
+                              this.props.passContributionData(data.contribution)
+                            })
+                            
 
 
                     }

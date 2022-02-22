@@ -101,6 +101,16 @@ export const getModelResult = (modelId , intervalId) => {
   })
 }
 
+export const getContributionResult = (modelId) => {
+  let url = URI + "/getContributionResult?modelId=" + modelId
+  return axios.get(url).then((response) =>{
+    return response.data;
+  }).catch((error) => {
+    console.log("failed to get model contribution result");
+    throw error;
+  })
+}
+
 
 export const getLearningRateScheduler = () => {
   let url = URI + "/getLearningRateScheduler"

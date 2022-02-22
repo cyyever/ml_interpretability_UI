@@ -4,12 +4,15 @@ from io import BytesIO
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.http import Http404
+from rest_framework import status
+
 from .dataset import Dataset
 from .learning_rate_scheduler import \
     get_supported_learning_rate_scheduler_names
 from .model import get_supported_model_names
 from .optimizer import get_supported_optimizer_names
-from .trainer import get_training_info, training
+from .trainer import get_training_info, training , remove_training_task
 
 # Create your views here.
 
@@ -86,6 +89,15 @@ class startRunModelView(APIView):
             optimizer,
         )
         return Response({"modelId": id})
+    
+    def delete(self , request):
+        id = request.query_params["modelId"]
+        try:
+            remove_training_task(id)
+            return Response({"success" : True})
+        except Exception as e:
+            raise Http404
+
 
 
 class getModelResultView(APIView):
@@ -104,3 +116,11 @@ class getLearningRateSchedulerView(APIView):
 class getOptimizersView(APIView):
     def get(self, request):
         return Response({"optimizers": get_supported_optimizer_names()})
+
+
+class getContributionResultView(APIView):
+    def get(self , request):
+        id = int(request.query_params["modelId"])
+        contribution = get_training_info(id)[1][0]
+        return Response(contribution)
+

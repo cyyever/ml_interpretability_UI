@@ -11,14 +11,17 @@ class ResultDisplay extends Component {
             modelId : "",
             numOfEpochs : "",
             isHYDRA : false,
-            displayedContent : false
+            displayedContent : false,
+            contributionData : [],
+            datasetName :"",
         }
     }
 
     componentDidMount(){
         if(this.props.modelId !== undefined && this.props.modelId !==""){
-            this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , isHYDRA : this.props.isHYDRA , displayedContent : true})
+            this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , isHYDRA : this.props.isHYDRA , displayedContent : true , datasetName : this.props.datasetName})
         }
+
     }
 
     handleSelect = (key) =>{
@@ -26,7 +29,11 @@ class ResultDisplay extends Component {
         this.setState({key : key})
 
     }
+    handleContributionData = (data) => {
+        this.setState({contributionData : data})
+    }
 
+    
   render() {
     let content
 
@@ -35,7 +42,7 @@ class ResultDisplay extends Component {
            content =  
            <Card bg="light">
             <Card.Body>
-           <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  displaySpinner= {(b)=> {this.setState({displayedSpinner : b})}}/>
+           <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData}/>
            </Card.Body>
             </Card>
         }else{
@@ -47,12 +54,12 @@ class ResultDisplay extends Component {
         <Tabs activeKey={this.state.key} onSelect={this.handleSelect} 
        id="controlled-tab-example">
               <Tab eventKey={1} title="Graph Result">
-              <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  displaySpinner= {(b)=> {this.setState({displayedSpinner : b})}}/>
+              <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} />
               
               </Tab>
               <Tab eventKey={2} title="Contribution Result">
-                {//<ContributionDisplay key = {this.state.modelId} modelId = {this.state.modelId}></ContributionDisplay>//
-                }
+                <ContributionDisplay key = {this.state.contributionData} contributionData = {this.state.contributionData} datasetName = {this.state.datasetName}/>
+                
                 
 
               </Tab>
