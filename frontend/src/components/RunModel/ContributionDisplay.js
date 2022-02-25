@@ -10,6 +10,8 @@ class ContributionDisplay extends Component {
         datasetName : "",
         maxImageData :[],
         minImageData :[],
+        max_indices : [],
+        min_indices :[],
         }
 
     }
@@ -63,14 +65,18 @@ class ContributionDisplay extends Component {
         let min_result = min_indices.map(function(a){return a.index}).reverse()
 
         getImageData(this.props.datasetName , 1 , max_result).then((data) =>{
-          this.setState({maxImageData : data})
+          this.setState({maxImageData : data , max_indices : max_indices})
         })
         getImageData(this.props.datasetName, 1 , min_result).then((data) =>{
-         this.setState({minImageData : data})
+         this.setState({minImageData : data , min_indices : min_indices})
         })
         
     }
+  
   render() {
+
+   
+  
     let positiveDisplay =""
     this.state.maxImageData.length > 0 ? positiveDisplay = 
     <div className = "col-12 py-2 mx-2">
@@ -78,9 +84,12 @@ class ContributionDisplay extends Component {
         <div className = "col-12">
           <h3>Positive Contribution</h3>
         </div>
+          
           {this.state.maxImageData.map((img , key) =>(
                         <div className="col-sm-1 py-2" key = {key}>
                        <img key = {key} src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"/>
+  
+                       <p>{this.state.max_indices[key].value.toExponential(3)}</p>
                        </div>
                     ))}
     </div>
@@ -97,6 +106,7 @@ class ContributionDisplay extends Component {
           {this.state.minImageData.map((img , key) =>(
                         <div className="col-sm-1 py-2" key = {key}>
                        <img key = {key} src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"/>
+                       <p>{this.state.min_indices[key].value.toExponential(3)}</p>
                        </div>
                     ))}
     </div>
