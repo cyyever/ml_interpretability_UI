@@ -1,6 +1,7 @@
 import typing
 
 from cyy_torch_toolbox.dataset_collection import DatasetCollection
+from cyy_torch_toolbox.dataset_repository import get_dataset_constructors
 from cyy_torch_toolbox.ml_type import MachineLearningPhase
 
 
@@ -9,9 +10,7 @@ class Dataset:
 
     @classmethod
     def get_supported_dataset_names(cls) -> typing.Sequence[str]:
-        return sorted(
-            DatasetCollection.get_dataset_constructors().keys(), key=str.casefold
-        )
+        return sorted(get_dataset_constructors().keys(), key=str.casefold)
 
     @classmethod
     def get_dataset_collection(cls, name: str) -> DatasetCollection:
