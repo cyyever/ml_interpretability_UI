@@ -1,24 +1,28 @@
 import React, { Component } from 'react'
-import { Form  , Row , Col , Spinner} from 'react-bootstrap'
+import { Form  , Row , Col , Spinner , Tabs , Tab} from 'react-bootstrap'
 import {getImageData} from '../../assets/api-client'
+import {ContributionTable} from  './ContributionTable'
+
 class ContributionDisplay extends Component {
     constructor(props){
         super(props)
         this.state = {
+        key : 1,
         contributionData :[],
-        numOfData : "",
+        numOfData : 1,
         datasetName : "",
         maxImageData :[],
         minImageData :[],
-        max_indices : [],
-        min_indices :[],
         }
 
     }
 
     componentDidMount(){
         if(this.props.contributionData !== undefined && this.props.contributionData !== ""){
-            this.setState({contributionData : this.props.contributionData , datasetName : this.props.datasetName})
+            this.setState({contributionData : this.props.contributionData , datasetName : this.props.datasetName},()=>{
+              this.handleFormSubmit()
+            })
+
         }
     }
 
@@ -27,6 +31,10 @@ class ContributionDisplay extends Component {
       var data = event.target.value;
       this.setState({numOfData : data})
     }
+
+    handleSelect = (key) =>{
+      this.setState({key : key})
+  }
 
     handleFormSubmit = () =>{
       let max_indices = []  
@@ -46,7 +54,7 @@ class ContributionDisplay extends Component {
                 min_indices.sort((a,b) => b.value - a.value)
               }
             }else{
-                if(this.state.contributionData[i] > max_indices[0].value ){
+              if(this.state.contributionData[i] > max_indices[0].value ){
                   max_indices[0] = {value:this.state.contributionData[i] , index: i}
                   max_indices.sort((a,b) => a.value - b.value)
                 }
@@ -57,61 +65,38 @@ class ContributionDisplay extends Component {
             }
           }
         }
-        console.log(max_indices)
-        max_indices = max_indices.filter(function(item) { return item.value >= 0 })
-        min_indices = min_indices.filter(function(item) { return item.value < 0 }) 
 
-        let max_result = max_indices.map(function(a) {return a.index}).reverse()
-        let min_result = min_indices.map(function(a){return a.index}).reverse()
+        max_indices = max_indices.filter(function(item) { return item.value >= 0 }).reverse()
+        min_indices = min_indices.filter(function(item) { return item.value < 0 }).reverse()
 
+        let max_result = max_indices.map(function(a) {return a.index})
+        let min_result = min_indices.map(function(a){return a.index})
+
+        if(max_result.length > 0){
         getImageData(this.props.datasetName , 1 , max_result).then((data) =>{
-          this.setState({maxImageData : data , max_indices : max_indices})
+          let data_ = []
+
+          for(let i = 0 ; i < data.length ; i++){
+              data_.push({image: data[i] , value : max_indices[i].value})
+          }
+          console.log(data_)
+          this.setState({maxImageData : data_})
         })
+      }
+
+      if(min_result.length > 0){
+        let data_ = []
+
         getImageData(this.props.datasetName, 1 , min_result).then((data) =>{
-         this.setState({minImageData : data , min_indices : min_indices})
+          for(let i = 0 ; i < data.length ; i++){
+            data_.push({image: data[i] , value : min_indices[i].value})
+        }
+        this.setState({minImageData : data_})
         })
-        
+      }
     }
   
   render() {
-
-   
-  
-    let positiveDisplay =""
-    this.state.maxImageData.length > 0 ? positiveDisplay = 
-    <div className = "col-12 py-2 mx-2">
-    <div className = "row">
-        <div className = "col-12">
-          <h3>Positive Contribution</h3>
-        </div>
-          
-          {this.state.maxImageData.map((img , key) =>(
-                        <div className="col-sm-1 py-2" key = {key}>
-                       <img key = {key} src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"/>
-  
-                       <p>{this.state.max_indices[key].value.toExponential(3)}</p>
-                       </div>
-                    ))}
-    </div>
-    </div> : positiveDisplay = ""
-
-
-    let negativeDisplay = ""
-    this.state.minImageData.length > 0 ? negativeDisplay = 
-    <div className = "col-12 py-2 mx-2">
-    <div className = "row">
-        <div className = "col-12">
-          <h3>Negative Contribution</h3>
-        </div>
-          {this.state.minImageData.map((img , key) =>(
-                        <div className="col-sm-1 py-2" key = {key}>
-                       <img key = {key} src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"/>
-                       <p>{this.state.min_indices[key].value.toExponential(3)}</p>
-                       </div>
-                    ))}
-    </div>
-  </div> : negativeDisplay = ""
-
 
   let displayContent = ""
 
@@ -120,11 +105,11 @@ class ContributionDisplay extends Component {
   <div className = "col-12 py-2 mx-2">
     <Form>
         <Form.Group as={Row} controlId = "numsOfContributionData">
-          <Form.Label className = "form-label fw-bolder">
-            Number to display :
-          </Form.Label>
+          <Form.Label  column sm ="2" className = "form-label fw-bolder">
+            Top K Dataset Contribution:
+          </Form.Label >
           <Col sm="2">
-              <Form.Control type="textfield" className = "form form-solid form-sm" size = "sm" placeholder="Enter number of data to display" value={this.state.numOfData} onChange={this.handlenumOfData}/>
+              <Form.Control type="textfield" className = "form form-solid form-sm" size = "sm" placeholder="default value of 1 " value={this.state.numOfData} onChange={this.handlenumOfData}/>
           </Col> 
 
           <Col sm = "1">
@@ -132,9 +117,21 @@ class ContributionDisplay extends Component {
           </Col>
         </Form.Group>
     </Form>
+    <div className = "row">
+      <div className = "col-12 my-2">
+      <Tabs activeKey={this.state.key} onSelect={this.handleSelect} id="controlled-tab-example">
+      <Tab eventKey={1} title="Positive Contribution">
+      <ContributionTable id = {this.state.maxImageData} data_={this.state.maxImageData}/> 
+      </Tab>
+      <Tab eventKey={2} title="Negative Contribution">
+      <ContributionTable id = {this.state.maxImageData} data_={this.state.minImageData}/> 
+      </Tab>
+      </Tabs>
+
+        </div> 
+    </div>
   </div>
-    {positiveDisplay}
-    {negativeDisplay}
+    
     </>
  : displayContent =   <div className="col-2 form-spinner"><Spinner animation="border" /></div>
     return (
