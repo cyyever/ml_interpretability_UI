@@ -4,4 +4,5 @@ from cyy_torch_toolbox.model_factory import get_model_info
 
 
 def get_supported_model_names() -> typing.Sequence[str]:
-    return sorted(get_model_info().keys(), key=str.casefold)
+    model_names = [info[1] for info in get_model_info().values()]
+    return sorted(model_names, key=str.casefold)

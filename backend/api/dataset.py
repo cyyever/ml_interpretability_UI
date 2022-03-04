@@ -15,7 +15,6 @@ class Dataset:
     @classmethod
     def get_dataset_collection(cls, name: str) -> DatasetCollection:
         if name not in cls.dataset_collections:
-            print(name)
             cls.dataset_collections[name] = DatasetCollection.get_by_name(name)
         return cls.dataset_collections[name]
 
