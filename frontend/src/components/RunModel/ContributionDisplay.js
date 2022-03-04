@@ -74,24 +74,21 @@ class ContributionDisplay extends Component {
 
         if(max_result.length > 0){
         getImageData(this.props.datasetName , 1 , max_result).then((data) =>{
-          let data_ = []
-
+         
           for(let i = 0 ; i < data.length ; i++){
-              data_.push({image: data[i] , value : max_indices[i].value})
+              data[i].value = max_indices[i].value
           }
-          console.log(data_)
-          this.setState({maxImageData : data_})
+          this.setState({maxImageData : data})
         })
       }
 
       if(min_result.length > 0){
-        let data_ = []
 
         getImageData(this.props.datasetName, 1 , min_result).then((data) =>{
           for(let i = 0 ; i < data.length ; i++){
-            data_.push({image: data[i] , value : min_indices[i].value})
+            data[i].value = min_indices[i].value
         }
-        this.setState({minImageData : data_})
+        this.setState({minImageData : data})
         })
       }
     }

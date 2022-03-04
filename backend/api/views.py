@@ -51,6 +51,8 @@ class RawDataView(APIView):
         return_data = []
         buffered = BytesIO()
 
+        labels = Dataset.get_label_names(datasetName)
+
         for index in indices:
             data = Dataset.get_raw_data_from_dataset(
                 datasetName, int(datasetType), int(index)
@@ -58,7 +60,8 @@ class RawDataView(APIView):
             data[0].save(buffered, format="JPEG")
             buffered.seek(0)
             img_str = base64.b64encode(buffered.getvalue())
-            return_data.append(img_str.decode("UTF-8"))
+         
+            return_data.append({"image" : img_str.decode("UTF-8") , "label" : labels[data[1]]})
         return Response(return_data)
 
 

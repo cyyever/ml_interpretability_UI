@@ -11,6 +11,10 @@ const COLUMNS =[
         )
         },
     {
+        Header : 'Label',
+        accessor : 'label'
+    },
+    {
         Header : 'Contribution',
         accessor : 'value',
         

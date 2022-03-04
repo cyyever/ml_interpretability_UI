@@ -46,7 +46,8 @@ class ImagePagination extends Component {
         if(indices.length !== 0){
             this.props.displaySpinner(true)
             getImageData(datasetName , datasetType , indices).then((data) =>{
-                 this.setState({imgData : data} , ()=>{
+                let data_ = data.map(function(a) {return a.image}) 
+                this.setState({imgData : data_} , ()=>{
                      this.props.displaySpinner(false)
                  })
             })
