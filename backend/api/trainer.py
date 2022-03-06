@@ -17,7 +17,7 @@ def __train_impl(task, extra_arguments):
     config, use_hydra = task
     queue = extra_arguments["queue"]
 
-    def after_epoch_hook(**kwargs):
+    def after_validation_hook(**kwargs):
         trainer = kwargs["model_executor"]
         epoch = kwargs["epoch"]
         training_metric = trainer.performance_metric
@@ -64,9 +64,9 @@ def __train_impl(task, extra_arguments):
         global_reproducible_env.enable()
         trainer, hook = config.create_trainer_and_hook(test_gradient=test_gradient)
         trainer.append_named_hook(
-            ModelExecutorHookPoint.AFTER_EPOCH,
+            ModelExecutorHookPoint.AFTER_VALIDATION,
             "gather_info",
-            after_epoch_hook,
+            after_validation_hook,
             stripable=True,
         )
         trainer.train()
@@ -85,9 +85,9 @@ def __train_impl(task, extra_arguments):
         )
     else:
         trainer.append_named_hook(
-            ModelExecutorHookPoint.AFTER_EPOCH,
+            ModelExecutorHookPoint.AFTER_VALIDATION,
             "gather_info",
-            after_epoch_hook,
+            after_validation_hook,
             stripable=True,
         )
         trainer.train()
