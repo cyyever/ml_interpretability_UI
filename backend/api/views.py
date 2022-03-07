@@ -124,7 +124,5 @@ class getOptimizersView(APIView):
 class getContributionResultView(APIView):
     def get(self, request):
         id = int(request.query_params["modelId"])
-        contribution = get_training_info(id)[1]
-        print(get_training_info(id))
-        print(contribution)
+        contribution = get_training_info(id)[1][0]
         return Response(contribution)

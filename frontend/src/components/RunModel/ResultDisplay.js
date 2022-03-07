@@ -26,10 +26,9 @@ class ResultDisplay extends Component {
     }
 
     handleSelect = (key) =>{
-        
         this.setState({key : key})
-
     }
+    
     handleContributionData = (data) => {
         this.setState({contributionData : data})
     }
@@ -56,13 +55,10 @@ class ResultDisplay extends Component {
        id="controlled-tab-example">
               <Tab eventKey={1} title="Model Result">
               <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} />
-              
+            
               </Tab>
               <Tab eventKey={2} title="Contribution Result">
                 <ContributionDisplay key = {this.state.contributionData} contributionData = {this.state.contributionData} datasetName = {this.state.datasetName}/>
-                
-                
-
               </Tab>
       </Tabs>      
         </div>
