@@ -9,10 +9,6 @@ charset-normalizer==2.0.9
 colorama==0.4.4
 colorlog==6.6.0
 Cython==0.29.27
-cyy-naive-lib @ git+https://github.com/cyyever/naive_python_lib.git@0e45097a467c53752fea0c64965e92ded2aa0ea5
-cyy-private-torch-algorithm @ git+https://github.com/cyyever/private_torch_algorithm.git@be84ae95d8083c28bae462b5292455faf2442877
-cyy-torch-algorithm @ git+https://github.com/cyyever/torch_algorithm.git@51989695f2beaa9c4b9cb0a09fa0d42e53ff949f
-cyy-torch-toolbox @ git+https://github.com/cyyever/torch_toolbox.git@05ad97bd362297471a47a0fc490d5edd29e2f20d
 Django==3.2.7
 django-cors-headers==3.10.1
 djangorestframework==3.12.4
