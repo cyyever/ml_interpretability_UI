@@ -1,18 +1,16 @@
 import base64
 from io import BytesIO
 
+from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from django.http import Http404
-from rest_framework import status
 
 from .dataset import Dataset
 from .learning_rate_scheduler import \
     get_supported_learning_rate_scheduler_names
 from .model import get_supported_model_names
 from .optimizer import get_supported_optimizer_names
-from .trainer import get_training_info, training , remove_training_task
+from .trainer import get_training_info, remove_training_task, training
 
 # Create your views here.
 
@@ -60,8 +58,10 @@ class RawDataView(APIView):
             data[0].save(buffered, format="JPEG")
             buffered.seek(0)
             img_str = base64.b64encode(buffered.getvalue())
-         
-            return_data.append({"image" : img_str.decode("UTF-8") , "label" : labels[data[1]]})
+
+            return_data.append(
+                {"image": img_str.decode("UTF-8"), "label": labels[data[1]]}
+            )
         return Response(return_data)
 
 
@@ -80,7 +80,7 @@ class startRunModelView(APIView):
         use_hydra = request.query_params["useHydra"] == "true"
         try:
             learning_rate = float(request.query_params["learningRate"])
-        except Exception as e :
+        except Exception as e:
             learning_rate = None
         id = training(
             dataset_name,
@@ -92,22 +92,22 @@ class startRunModelView(APIView):
             optimizer,
         )
         return Response({"modelId": id})
-    
-    def delete(self , request):
+
+    def delete(self, request):
         id = request.query_params["modelId"]
         try:
             remove_training_task(id)
-            return Response({"success" : True})
+            return Response({"success": True})
         except Exception as e:
             raise Http404
-
 
 
 class getModelResultView(APIView):
     def get(self, request):
         id = int(request.query_params["modelId"])
         result = get_training_info(id)
-        return Response({"flag" : result[2] , "result" :result[0]})
+        return Response({"flag": result[2], "result": result[0]})
+
 
 class getLearningRateSchedulerView(APIView):
     def get(self, request):
@@ -122,10 +122,9 @@ class getOptimizersView(APIView):
 
 
 class getContributionResultView(APIView):
-    def get(self , request):
+    def get(self, request):
         id = int(request.query_params["modelId"])
         contribution = get_training_info(id)[1]
         print(get_training_info(id))
         print(contribution)
         return Response(contribution)
-
