@@ -47,22 +47,23 @@ class ModelGraphsDisplay extends Component {
         this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , displayedSpinner : true} , ()=>{
           var id = setInterval(() => {
                 getModelResult(this.state.modelId , this.state.intervalId).then((data) =>{
-                    this.setState({data : data} , () =>{
+                    this.setState({data : data.result} , () =>{
                         let valid_acc = []
                         let train_acc = []
                         let valid_loss = []
                         let train_loss = []
                         let learning_rates = []
-                        if (data !== []){
-                        data.forEach((result) => {
+                        let labels = []
+                        if (data.result !== []){
+                        data.result.forEach((result) => {
                             valid_acc.push(result.validation_acc)
                             train_acc.push(result.training_acc)
                             valid_loss.push(result.validation_loss)
                             train_loss.push(result.training_loss)
                             learning_rates.push(result.learning_rate)
+                            labels.push(result.epoch)
 
                         })
-                        let labels = Array.from({length: data.length }, (_, i) => i + 1)
 
                         let acc_result = [
                             {
@@ -113,7 +114,7 @@ class ModelGraphsDisplay extends Component {
                                             
                         this.setState({acc_result: data_ , loss_result : data__ , learning_result : data___})
                     }     
-                        if(data.length === parseInt(this.state.numOfEpochs)){
+                        if(data.flag === true){
                           this.setState({displayedSpinner : false})
                             clearInterval(this.state.intervalId)
                             getContributionResult(this.state.modelId).then((data) =>{

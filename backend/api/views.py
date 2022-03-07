@@ -107,7 +107,7 @@ class getModelResultView(APIView):
     def get(self, request):
         id = int(request.query_params["modelId"])
         result = get_training_info(id)
-        return Response(result[0])
+        return Response({"flag" : result[2] , "result" :result[0]})
 
 class getLearningRateSchedulerView(APIView):
     def get(self, request):
