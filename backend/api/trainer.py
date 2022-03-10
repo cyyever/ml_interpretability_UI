@@ -36,7 +36,6 @@ def __train_impl(task, extra_arguments):
             queue_name="info",
         )
 
-    # config.make_reproducible_env = False
     if use_hydra:
         config.make_reproducible_env = True
     trainer = config.create_trainer()
@@ -48,8 +47,10 @@ def __train_impl(task, extra_arguments):
 
     get_logger().info("begin train")
 
+    trainer_device = None
     if use_hydra:
         trainer.train()
+        trainer_device = trainer.device
         global_reproducible_env.disable()
         previous_training_loss = {
             epoch: trainer.performance_metric.get_loss(epoch).cpu()
@@ -69,6 +70,7 @@ def __train_impl(task, extra_arguments):
             after_validation_hook,
             stripable=True,
         )
+        trainer.set_device(trainer_device)
         trainer.train()
         training_loss = {
             epoch: trainer.performance_metric.get_loss(epoch).cpu()
@@ -111,6 +113,7 @@ def training(
     use_hydra: bool,
     lr_scheduler_name=None,
     optimizer_name=None,
+    tracking_percentage=None,
 ) -> int:
     """Start a new training job and return the task id."""
     global __next_task_id
@@ -130,6 +133,8 @@ def training(
         config.hyper_parameter_config.optimizer_name = optimizer_name
     else:
         config.hyper_parameter_config.optimizer_name = "SGD"
+    if tracking_percentage is not None:
+        config.tracking_percentage = tracking_percentage
 
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
@@ -177,9 +182,12 @@ def remove_training_task(task_id):
 
 
 if __name__ == "__main__":
-    task_id = training("MNIST", "lenet5", 1, 0.1, use_hydra=True)
+    task_id = training(
+        "MNIST", "lenet5", 2, 0.1, use_hydra=True, tracking_percentage=0.000001
+    )
     while True:
         time.sleep(1)
         info, contribution, flag = get_training_info(task_id)
+        print(contribution)
         if flag:
             break
