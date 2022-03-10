@@ -54,14 +54,14 @@ class Dataset:
 
 # """ test driver"""
 
-# if __name__ == "__main__":
-#    print(dataset.get_label_names("CIFAR10"))
-#    print(list(dataset.get_label_indices("CIFAR10" , 1)))
-#    labels = dataset.get_label_indices("CIFAR10", 1)[2]
-#    print(labels)
-#    dataset_ = dataset.get_label_indices(dataset.get_dataset_collection("CIFAR10"),1)
-#    indexes = dataset_.get("9")
-#    return_data = []
-#    for x in list(indexes):
-#        result = list(dataset.get_raw_data_from_dataset(dataset.get_dataset_collection("CIFAR10") , 1, x))
-#        return_data.append(result)
+if __name__ == "__main__":
+    labels = Dataset.get_label_indices("MNIST", MachineLearningPhase.Training)
+    print(labels.keys())
+    indexes = labels.get(9)
+    return_data = []
+    for x in list(indexes):
+        result = list(
+            Dataset.get_raw_data_from_dataset("MNIST", MachineLearningPhase.Training, x)
+        )
+        return_data.append(result)
+    print(Dataset.get_raw_data_from_dataset("IMDB", MachineLearningPhase.Training, 1))
