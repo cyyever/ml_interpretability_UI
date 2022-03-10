@@ -2,15 +2,23 @@ import typing
 
 from cyy_torch_toolbox.dataset_collection import DatasetCollection
 from cyy_torch_toolbox.dataset_repository import get_dataset_constructors
-from cyy_torch_toolbox.ml_type import MachineLearningPhase
+from cyy_torch_toolbox.ml_type import DatasetType, MachineLearningPhase
 
 
 class Dataset:
     dataset_collections: dict = {}
 
     @classmethod
-    def get_supported_dataset_names(cls) -> typing.Sequence[str]:
-        return sorted(get_dataset_constructors().keys(), key=str.casefold)
+    def get_supported_dataset_names(cls) -> dict:
+        dataset_names = {}
+        for dataset_type in (DatasetType.Vision, DatasetType.Text):
+            dataset_names[str(dataset_type).lower()] = list(
+                sorted(
+                    get_dataset_constructors(dataset_type=dataset_type).keys(),
+                    key=str.casefold,
+                )
+            )
+        return dataset_names
 
     @classmethod
     def get_dataset_collection(cls, name: str) -> DatasetCollection:
@@ -44,7 +52,7 @@ class Dataset:
         return cls.get_dataset_collection(name).generate_raw_data(phase)
 
 
-""" test driver"""
+# """ test driver"""
 
 # if __name__ == "__main__":
 #    print(dataset.get_label_names("CIFAR10"))
