@@ -118,7 +118,7 @@ class RunModelForm extends Component {
       
       
       if(errorMessage.length <= 0){
-        startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate , 
+        startRunModel(this.state.selectedDataset.split("_")[0] , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate , 
            this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra, this.state.selectedDatasetIndices ).then((data) => {
           this.setState({modelId : data.modelId})
 
@@ -151,7 +151,7 @@ class RunModelForm extends Component {
                   </div>
 
 
-                  <div className="col-sm-6 my-1">
+                  <div className="col-sm-6">
                     <label className="form-label fw-bolder">
                       Dataset Name :
                     </label>
@@ -163,13 +163,25 @@ class RunModelForm extends Component {
                       <option value="default" hidden disabled>
                         Select dataset name
                       </option>
-                      {this.state.datasets.map((dataset) => (
-                        <option key={dataset} value={dataset}>
+                     
+                      <optgroup label = "Vision Dataset">
+                      {this.state.datasets.datasettype_vision !== undefined ? this.state.datasets.datasettype_vision.map((dataset) => (
+                        <option key={dataset} value={dataset+"_" + "vision"}>
                           {dataset}
                         </option>
-                      ))}
+                      )) : "" }
+                      </optgroup>
+
+                      <optgroup label = "Text Dataset">
+                      {this.state.datasets.datasettype_text !== undefined ? this.state.datasets.datasettype_text.map((dataset) => (
+                        <option key={dataset} value={dataset + "_" + "text"}>
+                          {dataset}
+                        </option>
+                      )) : ""}
+                      </optgroup>
                     </select>
                   </div>
+
 
 
                   <div className="col-sm-6 my-1">
