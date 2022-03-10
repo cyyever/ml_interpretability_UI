@@ -10,7 +10,6 @@ from cyy_torch_toolbox.data_structure.torch_process_task_queue import \
 from cyy_torch_toolbox.default_config import DefaultConfig
 from cyy_torch_toolbox.ml_type import (MachineLearningPhase,
                                        ModelExecutorHookPoint)
-from cyy_torch_toolbox.reproducible_env import global_reproducible_env
 
 
 def __train_impl(task, extra_arguments):
@@ -42,35 +41,23 @@ def __train_impl(task, extra_arguments):
     lr = trainer.hyper_parameter.get_learning_rate(trainer)
     config.hyper_parameter_config.learning_rate = lr
     config.hyper_parameter_config.find_learning_rate = False
-    global_reproducible_env.disable()
     trainer = config.create_trainer()
 
     get_logger().info("begin train")
 
-    trainer_device = None
     if use_hydra:
         trainer.train()
-        trainer_device = trainer.device
-        global_reproducible_env.disable()
         previous_training_loss = {
             epoch: trainer.performance_metric.get_loss(epoch).cpu()
             for epoch in range(1, trainer.hyper_parameter.epoch + 1)
         }
-        tester = trainer.get_inferencer(
-            phase=MachineLearningPhase.Test, copy_model=True
-        )
-        tester.disable_logger()
-        test_gradient = tester.get_gradient()
-        global_reproducible_env.load_last_seed()
-        global_reproducible_env.enable()
-        trainer, hook = config.create_trainer_and_hook(test_gradient=test_gradient)
+        trainer, hook, _ = config.create_trainer_and_hook()
         trainer.append_named_hook(
             ModelExecutorHookPoint.AFTER_VALIDATION,
             "gather_info",
             after_validation_hook,
             stripable=True,
         )
-        trainer.set_device(trainer_device)
         trainer.train()
         training_loss = {
             epoch: trainer.performance_metric.get_loss(epoch).cpu()
