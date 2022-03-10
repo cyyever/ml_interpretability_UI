@@ -32,9 +32,9 @@ class DatasetLabelView(APIView):
 class DatasetLabelIndexView(APIView):
     def get(self, request):
         datasetName = request.query_params["datasetName"]
-        datasetType = request.query_params["datasetType"]
+        datasetSplit = request.query_params["datasetSplit"]
         datasetLabel = request.query_params["datasetLabel"]
-        labels = Dataset.get_label_indices(datasetName, int(datasetType))[
+        labels = Dataset.get_label_indices(datasetName, int(datasetSplit))[
             int(datasetLabel)
         ]
         return Response({"indices": list(labels)})
@@ -43,7 +43,7 @@ class DatasetLabelIndexView(APIView):
 class RawDataView(APIView):
     def get(self, request):
         datasetName = request.query_params["datasetName"]
-        datasetType = request.query_params["datasetType"]
+        datasetSplit = request.query_params["datasetSplit"]
         indices = request.query_params["indices"]
         indices = indices.split(",")
         return_data = []
@@ -53,7 +53,7 @@ class RawDataView(APIView):
 
         for index in indices:
             data = Dataset.get_raw_data_from_dataset(
-                datasetName, int(datasetType), int(index)
+                datasetName, int(datasetSplit), int(index)
             )
             data[0].save(buffered, format="JPEG")
             buffered.seek(0)
@@ -79,8 +79,10 @@ class startRunModelView(APIView):
         optimizer = request.query_params["optimizer"]
         use_hydra = request.query_params["useHydra"] == "true"
         try:
+            tracking_percentage = float(request.query_params["trackingPercentage"])
             learning_rate = float(request.query_params["learningRate"])
         except Exception as e:
+            tracking_percentage = None
             learning_rate = None
         id = training(
             dataset_name,
@@ -90,6 +92,7 @@ class startRunModelView(APIView):
             use_hydra,
             lr_scheduler_name,
             optimizer,
+            tracking_percentage
         )
         return Response({"modelId": id})
 

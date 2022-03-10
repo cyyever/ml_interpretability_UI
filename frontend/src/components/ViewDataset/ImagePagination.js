@@ -12,7 +12,7 @@ class ImagePagination extends Component {
         this.state={
             data : [],
             datasetName : "",
-            datasetType: "",
+            datasetSplit: "",
             offset : 0,
             imgData : [],
             perPage : imagePerPageList[0],
@@ -25,7 +25,7 @@ class ImagePagination extends Component {
 
     componentDidMount(){
             this.setState({data :  this.props.data , datasetName: this.props.datasetName , imgData : [],
-                datasetType : this.props.datasetType ,  pageCount: Math.ceil(this.props.data.length / this.state.perPage)} , () =>{
+                datasetSplit : this.props.datasetSplit ,  pageCount: Math.ceil(this.props.data.length / this.state.perPage)} , () =>{
                 var indices = []
                 if (this.state.data.length > this.state.perPage){
                     indices = this.state.data.slice(0,this.state.perPage) 
@@ -33,7 +33,7 @@ class ImagePagination extends Component {
                 }else{
                     indices = this.state.data
                 }
-                this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+                this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
             })
         
         
@@ -41,11 +41,11 @@ class ImagePagination extends Component {
     }
 
 
-    recievedImageData(datasetName , datasetType , indices){
+    recievedImageData(datasetName , datasetSplit , indices){
         // call Image API Method
         if(indices.length !== 0){
             this.props.displaySpinner(true)
-            getImageData(datasetName , datasetType , indices).then((data) =>{
+            getImageData(datasetName , datasetSplit , indices).then((data) =>{
                 let data_ = data.map(function(a) {return a.image}) 
                 this.setState({imgData : data_} , ()=>{
                      this.props.displaySpinner(false)
@@ -69,7 +69,7 @@ class ImagePagination extends Component {
             }else{
                 indices = this.state.data.slice(this.state.offset , this.state.data.length)
             }
-            this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+            this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
         })
     }
 
@@ -93,7 +93,7 @@ class ImagePagination extends Component {
                     indices = this.state.data
                 }
          
-                this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+                this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
         })
     }
 
@@ -107,7 +107,7 @@ class ImagePagination extends Component {
                     }else{
                         indices = this.state.data.slice(this.state.offset , this.state.data.length)
                     }
-                    this.recievedImageData(this.state.datasetName , this.state.datasetType , indices)
+                    this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
             
                 })
             }
@@ -129,7 +129,7 @@ class ImagePagination extends Component {
                     </label>
                     <select
                       className="form-select form-select-solid form-select-sm"
-                      value={this.state.selectedDatasetType}
+                      value={this.state.perPage}
                       onChange={this.handleImagesPerPage}
                     >
                       {imagePerPageList.map((num) => (
