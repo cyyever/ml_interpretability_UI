@@ -54,8 +54,8 @@ export const getLabelIndices = (datasetName, datasetSplit, datasetLabel) => {
 };
 
 
-export const getImageData = (datasetName , datasetSplit , indices) => {
-  let url = URI + "/rawData?datasetName=" + datasetName + "&datasetSplit=" + datasetSplit + "&indices="+indices.toString();
+export const getRawData = (datasetName , datasetSplit ,datasetType , indices) => {
+  let url = URI + "/rawData?datasetName=" + datasetName + "&datasetSplit=" + datasetSplit + "&datasetType=" + datasetType +"&indices="+indices.toString();
   return axios.get(url).then((response) => {
     return response.data;
   }).catch((error) => {

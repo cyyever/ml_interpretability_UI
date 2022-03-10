@@ -44,24 +44,30 @@ class RawDataView(APIView):
     def get(self, request):
         datasetName = request.query_params["datasetName"]
         datasetSplit = request.query_params["datasetSplit"]
+        datasetType = request.query_params["datasetType"]
         indices = request.query_params["indices"]
         indices = indices.split(",")
         return_data = []
-        buffered = BytesIO()
-
         labels = Dataset.get_label_names(datasetName)
+        if(datasetType == 'vision'):
+            buffered = BytesIO()
+            for index in indices:
+                data = Dataset.get_raw_data_from_dataset(
+                    datasetName, int(datasetSplit), int(index)
+                )
+                data[0].save(buffered, format="JPEG")
+                buffered.seek(0)
+                img_str = base64.b64encode(buffered.getvalue())
 
-        for index in indices:
-            data = Dataset.get_raw_data_from_dataset(
-                datasetName, int(datasetSplit), int(index)
-            )
-            data[0].save(buffered, format="JPEG")
-            buffered.seek(0)
-            img_str = base64.b64encode(buffered.getvalue())
-
-            return_data.append(
-                {"image": img_str.decode("UTF-8"), "label": labels[data[1]]}
-            )
+                return_data.append(
+                    {"data": img_str.decode("UTF-8"), "label": labels[data[1]]}
+                )
+        elif(datasetType == 'text'):
+            for index in indices:
+                data = Dataset.get_raw_data_from_dataset(
+                    datasetName, int(datasetSplit), int(index)
+                )
+                return_data.append({"data":data[0] , "label" : labels[data[1]]})
         return Response(return_data)
 
 

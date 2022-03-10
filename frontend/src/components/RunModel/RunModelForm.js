@@ -275,7 +275,7 @@ class RunModelForm extends Component {
             </Card.Body>
           </Card>
         </div>
-        <ResultDisplay key= {this.state.modelId} modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs} isHYDRA = {this.state.selectedEnableHydra} datasetName = {this.state.selectedDataset}/>
+        <ResultDisplay key= {this.state.modelId} modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs} isHYDRA = {this.state.selectedEnableHydra} datasetName = {this.state.selectedDataset.split("_")[0]} datasetType = {this.state.selectedDataset.split("_")[1]}/>
       </>
     );
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form  , Row , Col , Spinner , Tabs , Tab} from 'react-bootstrap'
-import {getImageData} from '../../assets/api-client'
+import {getRawData} from '../../assets/api-client'
 import {ContributionTable} from  './ContributionTable'
 
 class ContributionDisplay extends Component {
@@ -73,7 +73,7 @@ class ContributionDisplay extends Component {
         let min_result = min_indices.map(function(a){return a.index})
 
         if(max_result.length > 0){
-        getImageData(this.props.datasetName , 1 , max_result).then((data) =>{
+        getRawData(this.props.datasetName , 1 ,this.props.datasetType , max_result).then((data) =>{
          
           for(let i = 0 ; i < data.length ; i++){
               data[i].value = max_indices[i].value
@@ -84,7 +84,7 @@ class ContributionDisplay extends Component {
 
       if(min_result.length > 0){
 
-        getImageData(this.props.datasetName, 1 , min_result).then((data) =>{
+        getRawData(this.props.datasetName, 1 , min_result).then((data) =>{
           for(let i = 0 ; i < data.length ; i++){
             data[i].value = min_indices[i].value
         }

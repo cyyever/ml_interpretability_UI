@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate'
 import { Card , Form} from 'react-bootstrap';
-import {getImageData} from '../../assets/api-client.js'
+import {getRawData} from '../../assets/api-client.js'
 import ImageModal from './ImageModal.js';
 
 const imagePerPageList = [20,25,30,35,40,45,50];
@@ -13,6 +13,7 @@ class ImagePagination extends Component {
             data : [],
             datasetName : "",
             datasetSplit: "",
+            datasetType : "",
             offset : 0,
             imgData : [],
             perPage : imagePerPageList[0],
@@ -20,11 +21,12 @@ class ImagePagination extends Component {
             pageCount : 0,
             selectedImage:"",
             jumpPage : "",
+
         }     
     }
 
     componentDidMount(){
-            this.setState({data :  this.props.data , datasetName: this.props.datasetName , imgData : [],
+            this.setState({data :  this.props.data , datasetName: this.props.datasetName , datasetType : this.props.datasetType , imgData : [],
                 datasetSplit : this.props.datasetSplit ,  pageCount: Math.ceil(this.props.data.length / this.state.perPage)} , () =>{
                 var indices = []
                 if (this.state.data.length > this.state.perPage){
@@ -33,7 +35,7 @@ class ImagePagination extends Component {
                 }else{
                     indices = this.state.data
                 }
-                this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
+                this.recievedImageData(this.state.datasetName , this.state.datasetSplit ,this.state.datasetType, indices)
             })
         
         
@@ -41,12 +43,12 @@ class ImagePagination extends Component {
     }
 
 
-    recievedImageData(datasetName , datasetSplit , indices){
+    recievedImageData(datasetName , datasetSplit , datasetType , indices){
         // call Image API Method
         if(indices.length !== 0){
             this.props.displaySpinner(true)
-            getImageData(datasetName , datasetSplit , indices).then((data) =>{
-                let data_ = data.map(function(a) {return a.image}) 
+            getRawData(datasetName , datasetSplit , datasetType, indices).then((data) =>{
+                let data_ = data.map(function(a) {return a.data}) 
                 this.setState({imgData : data_} , ()=>{
                      this.props.displaySpinner(false)
                  })
@@ -69,7 +71,7 @@ class ImagePagination extends Component {
             }else{
                 indices = this.state.data.slice(this.state.offset , this.state.data.length)
             }
-            this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
+            this.recievedImageData(this.state.datasetName , this.state.datasetSplit , this.state.datasetType , indices)
         })
     }
 
@@ -93,7 +95,7 @@ class ImagePagination extends Component {
                     indices = this.state.data
                 }
          
-                this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
+                this.recievedImageData(this.state.datasetName , this.state.datasetSplit, this.state.datasetType , indices)
         })
     }
 
@@ -107,7 +109,7 @@ class ImagePagination extends Component {
                     }else{
                         indices = this.state.data.slice(this.state.offset , this.state.data.length)
                     }
-                    this.recievedImageData(this.state.datasetName , this.state.datasetSplit , indices)
+                    this.recievedImageData(this.state.datasetName , this.state.datasetSplit , this.state.datasetType, indices)
             
                 })
             }
@@ -146,15 +148,28 @@ class ImagePagination extends Component {
                 <Form.Control size="sm" type="text" placeholder="Enter page" value={this.state.jumpPage} onChange={this.handleJumpPage} />
 
                 </div>
-                    <div className = "col-sm-12 py-2">
+                    <div className = "col-sm-12 py-2">   
+                            
                         <div className = "row">
-                        {this.state.imgData.map((img , key) =>(
+                        {this.state.datasetType === "vision" ? 
+                        
+                        this.state.imgData.map((img , key) =>(
                             <div className="col-sm-1 py-2" key = {key}>
                     
                            <img key = {key} className = "img-with-click" src = {"data:image/png;base64,"+img} alt="pic" width="50" height = "50"
                            onClick = {this.handleImageClick} />
                            </div>
-                        ))}
+                        ))  :
+
+                        this.state.imgData.map((data , key) =>(
+                            <div className="col-sm-12 py-3" key = {key}>
+                            <p>
+                                {data}
+                            </p>
+                           </div>
+                        ))
+                    } 
+                        
                         </div>
                         <ReactPaginate
                             nextLabel="next >"

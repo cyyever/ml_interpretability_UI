@@ -15,12 +15,13 @@ class ResultDisplay extends Component {
             displayedContent : false,
             contributionData : [],
             datasetName :"",
+            datasetType : "",
         }
     }
 
     componentDidMount(){
         if(this.props.modelId !== undefined && this.props.modelId !==""){
-            this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , isHYDRA : this.props.isHYDRA , displayedContent : true , datasetName : this.props.datasetName})
+            this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , isHYDRA : this.props.isHYDRA , displayedContent : true , datasetName : this.props.datasetName , datasetType : this.props.datasetType})
         }
 
     }
@@ -58,7 +59,7 @@ class ResultDisplay extends Component {
             
               </Tab>
               <Tab eventKey={2} title="Contribution Result">
-                <ContributionDisplay key = {this.state.contributionData} contributionData = {this.state.contributionData} datasetName = {this.state.datasetName}/>
+                <ContributionDisplay key = {this.state.contributionData} contributionData = {this.state.contributionData} datasetName = {this.state.datasetName} datasetType = {this.state.datasetType}/>
               </Tab>
       </Tabs>      
         </div>

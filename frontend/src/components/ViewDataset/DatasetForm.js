@@ -182,11 +182,8 @@ class DatasetForm extends Component {
             </Card.Body>
           </Card>
         </div>
-        {this.state.datasetType === "vision" ?
-        <ImagePagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset.split("_")[0]} datasetSplit = {this.state.selectedDatasetSplit} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
-        :
-        <TextDataDisplay key = {this.state.data} data = {this.state.data}/>  
-                  }         
+    
+        <ImagePagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset.split("_")[0]} datasetSplit = {this.state.selectedDatasetSplit} datasetType = {this.state.selectedDataset.split("_")[1]} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
       </>
     );
   }
