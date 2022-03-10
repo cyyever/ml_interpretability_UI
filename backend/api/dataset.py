@@ -12,7 +12,7 @@ class Dataset:
     def get_supported_dataset_names(cls) -> dict:
         dataset_names = {}
         for dataset_type in (DatasetType.Vision, DatasetType.Text):
-            dataset_names[str(dataset_type).lower()] = list(
+            dataset_names[str(dataset_type).lower().replace(".","_")] = list(
                 sorted(
                     get_dataset_constructors(dataset_type=dataset_type).keys(),
                     key=str.casefold,

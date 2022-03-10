@@ -15,13 +15,13 @@ export const getDatasetName = () => {
     });
 };
 
-export const getDatasetLabel = (datasetName, datasetType) => {
+export const getDatasetLabel = (datasetName, datasetSplit) => {
   let url =
     URI +
     "/datasetLabel?datasetName=" +
     datasetName +
-    "&datasetType=" +
-    datasetType;
+    "&datasetSplit=" +
+    datasetSplit;
   return axios
     .get(url)
     .then((reponse) => {
@@ -33,13 +33,13 @@ export const getDatasetLabel = (datasetName, datasetType) => {
     });
 };
 
-export const getLabelIndices = (datasetName, datasetType, datasetLabel) => {
+export const getLabelIndices = (datasetName, datasetSplit, datasetLabel) => {
   let url =
     URI +
     "/datasetLabelIndices?datasetName=" +
     datasetName +
-    "&datasetType=" +
-    datasetType +
+    "&datasetSplit=" +
+    datasetSplit +
     "&datasetLabel=" +
     datasetLabel;
   return axios
@@ -54,8 +54,8 @@ export const getLabelIndices = (datasetName, datasetType, datasetLabel) => {
 };
 
 
-export const getImageData = (datasetName , datasetType , indices) => {
-  let url = URI + "/rawData?datasetName=" + datasetName + "&datasetType=" + datasetType + "&indices="+indices.toString();
+export const getImageData = (datasetName , datasetSplit , indices) => {
+  let url = URI + "/rawData?datasetName=" + datasetName + "&datasetSplit=" + datasetSplit + "&indices="+indices.toString();
   return axios.get(url).then((response) => {
     return response.data;
   }).catch((error) => {
@@ -75,11 +75,11 @@ export const getModelName = () =>{
   })
 };
 
-export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate , learningRateSchedulerName , optimizer , useHydra) =>{
+export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate , learningRateSchedulerName , optimizer , useHydra , trackingPercentage) =>{
 
-  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra
+  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra + "&trackingPercentage=" + trackingPercentage
   if(!learningRate){
-    url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra
+    url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra + "&trackingPercentage=" + trackingPercentage
   }
   
   return axios.get(url).then((response) => {

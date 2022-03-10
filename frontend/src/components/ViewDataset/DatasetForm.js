@@ -6,7 +6,8 @@ import {
 } from "../../assets/api-client.js";
 import { Card , Spinner } from "react-bootstrap";
 import ImagePagination from "./ImagePagination.js";
-const datasetType = [
+import TextDataDisplay from "./TextDataDisplay.js";
+const datasetSplit = [
   {
     type: "Train",
     value: 1,
@@ -28,10 +29,11 @@ class DatasetForm extends Component {
       datasets: [],
       labels: [],
       selectedDataset: "default",
-      selectedDatasetType: datasetType[0].value,
+      selectedDatasetSplit: datasetSplit[0].value,
       selectedDatasetLabel: "default",
       data: [],
       displayedSpinner : false,
+      datasetType :"",
     };
   }
 
@@ -53,11 +55,11 @@ class DatasetForm extends Component {
   handleDatasetInput = (event) => {
     var data = event.target.value;
     this.setState(
-      { selectedDataset: data, labels: [], selectedDatasetLabel: "default" , displayedSpinner : true },
+      { data : [] ,selectedDataset: data, labels: [], selectedDatasetLabel: "default" , displayedSpinner : true , datasetType : data.split("_")[1]},
       () => {
         getDatasetLabel(
-          this.state.selectedDataset,
-          this.state.selectedDatasetType
+          this.state.selectedDataset.split("_")[0],
+          this.state.selectedDatasetSplit
         ).then((data) => {
           this.setState({ labels: data.datasetLabelName  , displayedSpinner : false});
         });
@@ -65,12 +67,12 @@ class DatasetForm extends Component {
     );
   };
 
-  handleDatasetTypeInput = (event) => {
-    this.setState({ selectedDatasetType: event.target.value , displayedSpinner : true}, () => {
+  handleDatasetSplitInput = (event) => {
+    this.setState({ selectedDatasetSplit: event.target.value , displayedSpinner : true}, () => {
       if (this.state.selectedDataset !== "default"  && this.state.selectedDatasetLabel !=="default") {
         getLabelIndices(
-          this.state.selectedDataset,
-          this.state.selectedDatasetType,
+          this.state.selectedDataset.split("_")[0],
+          this.state.selectedDatasetSplit,
           this.state.selectedDatasetLabel
         ).then((data_) => {
           this.setState({ data: data_.indices  , displayedSpinner : false});
@@ -85,8 +87,8 @@ class DatasetForm extends Component {
       () => {
         if (this.state.selectedDatasetLabel !== "default") {
           getLabelIndices(
-            this.state.selectedDataset,
-            this.state.selectedDatasetType,
+            this.state.selectedDataset.split("_")[0],
+            this.state.selectedDatasetSplit,
             this.state.selectedDatasetLabel
           ).then((data_) => {
             this.setState({ data: data_.indices ,displayedSpinner : false});
@@ -117,24 +119,35 @@ class DatasetForm extends Component {
                       <option value="default" hidden disabled>
                         Select dataset name
                       </option>
-                      {this.state.datasets.map((dataset) => (
-                        <option key={dataset} value={dataset}>
+                     
+                      <optgroup label = "Vision Dataset">
+                      {this.state.datasets.datasettype_vision !== undefined ? this.state.datasets.datasettype_vision.map((dataset) => (
+                        <option key={dataset} value={dataset+"_" + "vision"}>
                           {dataset}
                         </option>
-                      ))}
+                      )) : "" }
+                      </optgroup>
+
+                      <optgroup label = "Text Dataset">
+                      {this.state.datasets.datasettype_text !== undefined ? this.state.datasets.datasettype_text.map((dataset) => (
+                        <option key={dataset} value={dataset + "_" + "text"}>
+                          {dataset}
+                        </option>
+                      )) : ""}
+                      </optgroup>
                     </select>
                   </div>
 
                   <div className="col-sm-3">
                     <label className=" form-label fw-bolder ">
-                      Dataset Type :
+                      Dataset Split :
                     </label>
                     <select
                       className="form-select form-select-solid form-select-sm"
-                      value={this.state.selectedDatasetType}
-                      onChange={this.handleDatasetTypeInput}
+                      value={this.state.selectedDatasetSplit}
+                      onChange={this.handleDatasetSplitInput}
                     >
-                      {datasetType.map((type) => (
+                      {datasetSplit.map((type) => (
                         <option key={type.value} value={type.value}>
                           {type.type}
                         </option>
@@ -169,10 +182,11 @@ class DatasetForm extends Component {
             </Card.Body>
           </Card>
         </div>
-
-        <ImagePagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset} datasetType = {this.state.selectedDatasetType} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
-
-
+        {this.state.datasetType === "vision" ?
+        <ImagePagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset.split("_")[0]} datasetSplit = {this.state.selectedDatasetSplit} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
+        :
+        <TextDataDisplay key = {this.state.data} data = {this.state.data}/>  
+                  }         
       </>
     );
   }

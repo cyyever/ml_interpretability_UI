@@ -22,6 +22,7 @@ class RunModelForm extends Component {
       selectedOptimizers : "",
       selectedEnableHydra : false,
       isOptimizerDisabled : false,
+      selectedDatasetIndices : "",
     };
   }
 
@@ -83,6 +84,10 @@ class RunModelForm extends Component {
     })
    }
   }
+  handleSelectedDatasetIndices = (event) =>{
+    var data = event.target.value;
+    this.setState({selectedDatasetIndices: data})
+  }
   handleFormSubmit = () =>{
     this.setState({errorMessage : []} , ()=>{
       var errorMessage = []
@@ -105,10 +110,16 @@ class RunModelForm extends Component {
       if(isNaN(this.state.learningRate)){
         errorMessage.append("Please enter the correct learning rate")
       }
+
+      
+      //let dataIndices_str = this.state.selectedDatasetIndices.replace(/\s+/g , '')
+      //dataIndices_str = dataIndices_str.split(',').map(Number)
+
+      
       
       if(errorMessage.length <= 0){
-        startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate 
-          , this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra).then((data) => {
+        startRunModel(this.state.selectedDataset , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate , 
+           this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra, this.state.selectedDatasetIndices ).then((data) => {
           this.setState({modelId : data.modelId})
 
 
@@ -229,7 +240,14 @@ class RunModelForm extends Component {
                       ))} 
                       </select>
                      </div>
+                  
+                     <div className="col-sm-12 my-1">
+                    <label className="form-label fw-bolder">
+                      Dataset Indices :
+                    </label>
+                    <Form.Control size="sm" type="text" placeholder="Enter Indices" value={this.state.selectedDatasetIndices} onChange={this.handleSelectedDatasetIndices} />
 
+                  </div>
 
                   </div>
                   <button type ="button" className="btn btn-dark my-2 " onClick={this.handleFormSubmit}>Submit</button>
