@@ -37,7 +37,7 @@ class Dataset:
 
     @classmethod
     def get_label_names(cls, name: str) -> dict:
-        return dict(enumerate(cls.get_dataset_collection(name).get_label_names()))
+        return cls.get_dataset_collection(name).get_label_names()
 
     @classmethod
     def get_raw_data_from_dataset(
@@ -65,3 +65,4 @@ if __name__ == "__main__":
         )
         return_data.append(result)
     print(Dataset.get_raw_data_from_dataset("IMDB", MachineLearningPhase.Training, 1))
+    print(Dataset.get_label_names("IMDB"))
