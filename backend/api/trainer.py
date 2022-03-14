@@ -1,10 +1,6 @@
 import threading
-import os
-os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 import time
 
-
-import pytest
 from cyy_naive_lib.log import get_logger
 from cyy_private_torch_algorithm.lean_hydra.lean_hydra_config import \
     LeanHyDRAConfig
@@ -50,10 +46,6 @@ def __train_impl(task, extra_arguments):
 
     if use_hydra:
         trainer.train()
-        previous_training_loss = {
-            epoch: trainer.performance_metric.get_loss(epoch).cpu()
-            for epoch in range(1, trainer.hyper_parameter.epoch + 1)
-        }
         trainer, hook, _ = config.create_trainer_and_hook()
         trainer.append_named_hook(
             ModelExecutorHookPoint.AFTER_VALIDATION,
@@ -62,15 +54,6 @@ def __train_impl(task, extra_arguments):
             stripable=True,
         )
         trainer.train()
-        training_loss = {
-            epoch: trainer.performance_metric.get_loss(epoch).cpu()
-            for epoch in range(1, trainer.hyper_parameter.epoch + 1)
-        }
-
-        for epoch in training_loss:
-            assert training_loss[epoch] == pytest.approx(
-                previous_training_loss[epoch], abs=1e-6
-            )
         queue.put_result(
             {"contribution": hook.contributions.cpu().tolist()},
             queue_name="contribution",
