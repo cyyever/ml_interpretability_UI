@@ -77,9 +77,12 @@ export const getModelName = () =>{
 
 export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate , learningRateSchedulerName , optimizer , useHydra , trackingPercentage) =>{
 
-  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra + "&trackingPercentage=" + trackingPercentage
-  if(!learningRate){
-    url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra + "&trackingPercentage=" + trackingPercentage
+  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra 
+  if(learningRate){
+    url  += "&learningRate=" + learningRate
+  }
+  if(trackingPercentage){
+    url += "&trackingPercentage=" + trackingPercentage
   }
   
   return axios.get(url).then((response) => {

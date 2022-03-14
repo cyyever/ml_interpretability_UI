@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {getDatasetName ,  getModelName , startRunModel , getLearningRateScheduler , getOptimizers} from "../../assets/api-client.js";
-import { Card , Form  , Alert} from "react-bootstrap";
+import { Card , Form  , Alert, InputGroup} from "react-bootstrap";
 import ResultDisplay from "./ResultDisplay.js";
 
 const optimizersForHYDRA = ["SGD"]
@@ -22,7 +22,7 @@ class RunModelForm extends Component {
       selectedOptimizers : "",
       selectedEnableHydra : false,
       isOptimizerDisabled : false,
-      selectedDatasetIndices : "",
+      selectedPercentage : "",
     };
   }
 
@@ -84,9 +84,9 @@ class RunModelForm extends Component {
     })
    }
   }
-  handleSelectedDatasetIndices = (event) =>{
+  handleSelectedPercentage = (event) =>{
     var data = event.target.value;
-    this.setState({selectedDatasetIndices: data})
+    this.setState({selectedPercentage : data})
   }
   handleFormSubmit = () =>{
     this.setState({errorMessage : []} , ()=>{
@@ -119,7 +119,7 @@ class RunModelForm extends Component {
       
       if(errorMessage.length <= 0){
         startRunModel(this.state.selectedDataset.split("_")[0] , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate , 
-           this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra, this.state.selectedDatasetIndices ).then((data) => {
+           this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra, this.state.selectedPercentage).then((data) => {
           this.setState({modelId : data.modelId})
 
 
@@ -253,12 +253,15 @@ class RunModelForm extends Component {
                       </select>
                      </div>
                   
-                     <div className="col-sm-12 my-1">
+                     <div className="col-sm-6 my-1">
                     <label className="form-label fw-bolder">
-                      Dataset Indices :
+                      Dataset Percentage :
                     </label>
-                    <Form.Control size="sm" type="text" placeholder="Enter Indices" value={this.state.selectedDatasetIndices} onChange={this.handleSelectedDatasetIndices} />
-
+                    <InputGroup>
+                    <Form.Control size="sm" type="text" placeholder="Enter percentage of the data" value={this.state.selectedPercentage} onChange={this.handleSelectedPercentage} />
+                    <InputGroup.Text id="basic-addon1">%</InputGroup.Text>
+                    </InputGroup>
+                   
                   </div>
 
                   </div>

@@ -1,0 +1,26 @@
+  72        0.013 ls
+  73        0.003 cd .\api\
+  74        0.012 ls
+  75        1.285 python.exe .\trainer.py
+  76        0.602 python.exe -m pip install -r torchvision --user
+  77        2.245 python.exe -m pip install  torchvision --user
+  78        1.256 python.exe -m pip install  torchtext --user
+  79        1.185 python.exe .\trainer.py
+  80        1.086 python.exe -m pip install  tensorboardt --user
+  81        5.764 python.exe -m pip install  tensorboard --user
+  82        0.668 python.exe -m pip install  tensorboardt --user
+  83        1.301 python.exe .\trainer.py
+  84        3.096 python.exe -m pip install gevent  --user
+  85        1.415 python.exe .\trainer.py
+  86        0.083 py .\trainer.py
+  87        0.057 which python
+  88        6.423 python.exe
+  89        0.041 which python
+  90        0.031 history
+  91        0.017 history > aa
+  92        0.046 vim aa
+  93        2.600 nvim aa
+  94        0.043 history  | grep pip > aa
+  95       38.029 nvim aa
+  96        0.057 history  | grep pip > aa
+

@@ -11,15 +11,16 @@ class ContributionDisplay extends Component {
         contributionData :[],
         numOfData : 1,
         datasetName : "",
-        maxImageData :[],
-        minImageData :[],
+        datasetType : "",
+        maxData :[],
+        minData :[],
         }
 
     }
 
     componentDidMount(){
         if(this.props.contributionData !== undefined && this.props.contributionData !== ""){
-            this.setState({contributionData : this.props.contributionData , datasetName : this.props.datasetName},()=>{
+            this.setState({contributionData : this.props.contributionData , datasetName : this.props.datasetName , datasetType : this.props.datasetType},()=>{
               this.handleFormSubmit()
             })
 
@@ -78,17 +79,17 @@ class ContributionDisplay extends Component {
           for(let i = 0 ; i < data.length ; i++){
               data[i].value = max_indices[i].value
           }
-          this.setState({maxImageData : data})
+          this.setState({maxData : data})
         })
       }
 
       if(min_result.length > 0){
 
-        getRawData(this.props.datasetName, 1 , min_result).then((data) =>{
+        getRawData(this.props.datasetName, 1 ,this.props.datasetType , min_result).then((data) =>{
           for(let i = 0 ; i < data.length ; i++){
             data[i].value = min_indices[i].value
         }
-        this.setState({minImageData : data})
+        this.setState({minData : data})
         })
       }
     }
@@ -118,10 +119,10 @@ class ContributionDisplay extends Component {
       <div className = "col-12 my-2">
       <Tabs activeKey={this.state.key} onSelect={this.handleSelect} id="controlled-tab-example">
       <Tab eventKey={1} title="Positive Contribution">
-      <ContributionTable id = {this.state.maxImageData} data_={this.state.maxImageData}/> 
+      <ContributionTable id = {this.state.maxData} data_={this.state.maxData} datasetType = {this.state.datasetType}/> 
       </Tab>
       <Tab eventKey={2} title="Negative Contribution">
-      <ContributionTable id = {this.state.maxImageData} data_={this.state.minImageData}/> 
+      <ContributionTable id = {this.state.minData} data_={this.state.minData} datasetType = {this.state.datasetType}/> 
       </Tab>
       </Tabs>
 

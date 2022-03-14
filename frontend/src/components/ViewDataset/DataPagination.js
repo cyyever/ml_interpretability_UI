@@ -4,9 +4,9 @@ import { Card , Form} from 'react-bootstrap';
 import {getRawData} from '../../assets/api-client.js'
 import ImageModal from './ImageModal.js';
 
-const imagePerPageList = [20,25,30,35,40,45,50];
+const imagePerPageList = [10,20,25,30,35,40,45,50];
 
-class ImagePagination extends Component {
+class DataPagination extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -127,7 +127,7 @@ class ImagePagination extends Component {
 
                 <div className="col-sm-2">
                     <label className=" form-label fw-bolder ">
-                      Images per Page :
+                      Datas per Page :
                     </label>
                     <select
                       className="form-select form-select-solid form-select-sm"
@@ -162,10 +162,16 @@ class ImagePagination extends Component {
                         ))  :
 
                         this.state.imgData.map((data , key) =>(
-                            <div className="col-sm-12 py-3" key = {key}>
-                            <p>
-                                {data}
-                            </p>
+                            <div className="col-sm-12 py-2" key = {key}>
+                            <Card style = {{height:"200px"}}>
+                                <Card.Body>
+                                    <div style={{overflowY:"auto" , maxHeight : "170px"}}>
+                                    <p>
+                                        {data}
+                                    </p>
+                                    </div>
+                                </Card.Body>
+                            </Card>
                            </div>
                         ))
                     } 
@@ -206,4 +212,4 @@ class ImagePagination extends Component {
     }
 }
 
-export default ImagePagination
+export default DataPagination

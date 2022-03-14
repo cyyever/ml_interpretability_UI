@@ -1,5 +1,8 @@
 import threading
+import os
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 import time
+
 
 import pytest
 from cyy_naive_lib.log import get_logger
@@ -170,7 +173,7 @@ def remove_training_task(task_id):
 
 if __name__ == "__main__":
     task_id = training(
-        "MNIST", "lenet5", 2, 0.1, use_hydra=True, tracking_percentage=0.000001
+        "MNIST", "lenet5", 1, 0.1, use_hydra=True, tracking_percentage=0.000001
     )
     while True:
         time.sleep(1)

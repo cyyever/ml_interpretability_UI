@@ -14,7 +14,7 @@ function App() {
     <div className="App">
     <Navbar bg="light" fixed="top">
        <div className = "container-fluid">
-    <Navbar.Brand>HyDra Demo</Navbar.Brand>
+    <Navbar.Brand>Deep Learning Demo</Navbar.Brand>
     </div>
   </Navbar>
 

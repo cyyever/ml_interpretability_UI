@@ -55,7 +55,7 @@ class ImageModal extends Component {
         <Modal show={this.state.showHide} onHide = {()=> this.handleModalShowHide()} animation={false}dialogClassName='modal-dialog-img' contentClassName='modal-content-img' 
         centered>
             <Modal.Body>
-            {this.state.imgData ?  <img src = {this.state.imgData} className="img-fluid img-with-click" alt = "Image Picture" width = {this.state.imgWidth} height = {this.state.imgHeight} onClick={this.handleImageOnClick}/> : ""}
+            {this.state.imgData ?  <img src = {this.state.imgData} className="img-fluid img-with-click" alt = "missing pic" width = {this.state.imgWidth} height = {this.state.imgHeight} onClick={this.handleImageOnClick}/> : ""}
             </Modal.Body>
         </Modal>
         )

@@ -5,8 +5,7 @@ import {
   getLabelIndices
 } from "../../assets/api-client.js";
 import { Card , Spinner } from "react-bootstrap";
-import ImagePagination from "./ImagePagination.js";
-import TextDataDisplay from "./TextDataDisplay.js";
+import DataPagination from "./DataPagination.js";
 const datasetSplit = [
   {
     type: "Train",
@@ -183,7 +182,7 @@ class DatasetForm extends Component {
           </Card>
         </div>
     
-        <ImagePagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset.split("_")[0]} datasetSplit = {this.state.selectedDatasetSplit} datasetType = {this.state.selectedDataset.split("_")[1]} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
+        <DataPagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset.split("_")[0]} datasetSplit = {this.state.selectedDatasetSplit} datasetType = {this.state.selectedDataset.split("_")[1]} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
       </>
     );
   }
