@@ -85,6 +85,7 @@ __next_task_id = 0
 __training_queues: dict = {}
 __training_info: dict = {}
 __contribution: dict = {}
+__training_result: dict = {}
 
 
 def training(
@@ -128,6 +129,7 @@ def training(
         task_id = __next_task_id
         __training_queues[task_id] = queue
         __training_info[task_id] = []
+        __training_result[task_id] = []
         __contribution[task_id] = []
         __next_task_id += 1
         return task_id
@@ -138,6 +140,9 @@ def get_training_info(task_id: int) -> tuple:
     with __task_lock:
         queue = __training_queues.get(task_id, None)
         result_flag = 0
+        if task_id in __training_result:
+            if __training_result[task_id] < 0:
+                return (None, None, -1)
         if queue is not None:
             while queue.has_result(queue_name="info"):
                 epoch_info = queue.get_result(queue_name="info")
@@ -154,6 +159,7 @@ def get_training_info(task_id: int) -> tuple:
                     result_flag = 0
                 else:
                     result_flag = -1
+                __training_result[task_id] = result_flag
             else:
                 result_flag = 1
         return (
