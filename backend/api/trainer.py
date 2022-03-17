@@ -1,5 +1,6 @@
 import threading
 import time
+import traceback
 
 from cyy_naive_lib.log import get_logger
 from cyy_private_torch_algorithm.lean_hydra.lean_hydra_config import \
@@ -34,41 +35,49 @@ def __train_impl(task, extra_arguments):
             queue_name="info",
         )
 
-    if use_hydra:
-        config.make_reproducible_env = True
-    trainer = config.create_trainer()
-    lr = trainer.hyper_parameter.get_learning_rate(trainer)
-    config.hyper_parameter_config.learning_rate = lr
-    config.hyper_parameter_config.find_learning_rate = False
-    trainer = config.create_trainer()
+    try:
+        if use_hydra:
+            config.make_reproducible_env = True
+        trainer = config.create_trainer()
+        lr = trainer.hyper_parameter.get_learning_rate(trainer)
+        config.hyper_parameter_config.learning_rate = lr
+        config.hyper_parameter_config.find_learning_rate = False
+        trainer = config.create_trainer()
 
-    get_logger().info("begin train")
+        get_logger().info("begin train")
 
-    if use_hydra:
-        trainer.train()
-        trainer, hook, _ = config.create_trainer_and_hook()
-        trainer.append_named_hook(
-            ModelExecutorHookPoint.AFTER_VALIDATION,
-            "gather_info",
-            after_validation_hook,
-            stripable=True,
-        )
-        trainer.train()
+        if use_hydra:
+            trainer.train()
+            trainer, hook, _ = config.create_trainer_and_hook()
+            trainer.append_named_hook(
+                ModelExecutorHookPoint.AFTER_VALIDATION,
+                "gather_info",
+                after_validation_hook,
+                stripable=True,
+            )
+            trainer.train()
+            queue.put_result(
+                {"contribution": hook.contributions.cpu().tolist()},
+                queue_name="contribution",
+            )
+        else:
+            trainer.append_named_hook(
+                ModelExecutorHookPoint.AFTER_VALIDATION,
+                "gather_info",
+                after_validation_hook,
+                stripable=True,
+            )
+            trainer.train()
+
+        get_logger().info("stop trainer")
+    except Exception as e:
+        get_logger().error("catch exception:%s", e)
+        get_logger().error("traceback:%s", traceback.format_exc())
         queue.put_result(
-            {"contribution": hook.contributions.cpu().tolist()},
-            queue_name="contribution",
+            False,
+            queue_name="worker_state",
         )
-    else:
-        trainer.append_named_hook(
-            ModelExecutorHookPoint.AFTER_VALIDATION,
-            "gather_info",
-            after_validation_hook,
-            stripable=True,
-        )
-        trainer.train()
-
-    get_logger().info("stop trainer")
-    return True
+    queue.put_result(True, queue_name="worker_state")
 
 
 __task_lock = threading.RLock()
@@ -112,6 +121,7 @@ def training(
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
     queue.add_result_queue(name="contribution")
+    queue.add_result_queue(name="worker_state")
     queue.set_worker_fun(__train_impl)
     queue.add_task((config, use_hydra))
     with __task_lock:
@@ -127,9 +137,8 @@ def get_training_info(task_id: int) -> tuple:
     """Give task_id, return the loss & acc of model, contribution and a flag indicating the training has finished"""
     with __task_lock:
         queue = __training_queues.get(task_id, None)
-        finish_flag = True
+        result_flag = 0
         if queue is not None:
-            finish_flag = False
             while queue.has_result(queue_name="info"):
                 epoch_info = queue.get_result(queue_name="info")
                 __training_info[task_id].append(epoch_info)
@@ -137,14 +146,20 @@ def get_training_info(task_id: int) -> tuple:
                 __contribution[task_id].append(
                     queue.get_result(queue_name="contribution")
                 )
-            if queue.has_result():
+            if queue.has_result(queue_name="worker_state"):
+                res = queue.get_result(queue_name="worker_state")
                 queue.release()
                 del __training_queues[task_id]
-                finish_flag = True
+                if res:
+                    result_flag = 0
+                else:
+                    result_flag = -1
+            else:
+                result_flag = 1
         return (
             __training_info[task_id],
             __contribution.get(task_id, None),
-            finish_flag,
+            result_flag,
         )
 
 
