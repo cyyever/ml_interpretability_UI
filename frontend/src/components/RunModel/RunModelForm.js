@@ -119,7 +119,7 @@ class RunModelForm extends Component {
       
       if(errorMessage.length <= 0){
         startRunModel(this.state.selectedDataset.split("_")[0] , this.state.selectedModel , this.state.numOfEpochs , this.state.learningRate , 
-           this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra, this.state.selectedPercentage).then((data) => {
+           this.state.selectedLearningRateScheduler , this.state.selectedOptimizers , this.state.selectedEnableHydra, (parseFloat(this.state.selectedPercentage)/100)).then((data) => {
           this.setState({modelId : data.modelId})
 
 
