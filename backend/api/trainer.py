@@ -129,20 +129,19 @@ def training(
         task_id = __next_task_id
         __training_queues[task_id] = queue
         __training_info[task_id] = []
-        __training_result[task_id] = []
         __contribution[task_id] = []
         __next_task_id += 1
         return task_id
 
 
-def get_training_info(task_id: int) -> tuple:
+def get_training_info(task_id: int) -> tuple | None:
     """Give task_id, return the loss & acc of model, contribution and a flag indicating the training has finished"""
     with __task_lock:
-        queue = __training_queues.get(task_id, None)
-        result_flag = 0
         if task_id in __training_result:
             if __training_result[task_id] < 0:
                 return (None, None, -1)
+        queue = __training_queues.get(task_id, None)
+        result_flag = 0
         if queue is not None:
             while queue.has_result(queue_name="info"):
                 epoch_info = queue.get_result(queue_name="info")
@@ -153,6 +152,7 @@ def get_training_info(task_id: int) -> tuple:
                 )
             if queue.has_result(queue_name="worker_state"):
                 res = queue.get_result(queue_name="worker_state")
+                get_logger().error("release queue %s", res)
                 queue.release()
                 del __training_queues[task_id]
                 if res:
@@ -162,8 +162,10 @@ def get_training_info(task_id: int) -> tuple:
                 __training_result[task_id] = result_flag
             else:
                 result_flag = 1
+        if task_id not in __training_info:
+            return None
         return (
-            __training_info[task_id],
+            __training_info.get(task_id, None),
             __contribution.get(task_id, None),
             result_flag,
         )
@@ -182,6 +184,8 @@ if __name__ == "__main__":
     while True:
         time.sleep(1)
         info, contribution, flag = get_training_info(task_id)
-        print(contribution)
-        if flag:
+        if flag == 0:
+            print(contribution)
+            break
+        if flag == -1:
             break
