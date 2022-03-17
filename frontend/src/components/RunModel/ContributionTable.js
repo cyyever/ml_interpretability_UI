@@ -62,7 +62,7 @@ const TEXT_COLUMNS =[
 export const ContributionTable = ({data_ , datasetType}) => {
     let COLUMNS;
     datasetType === "vision" ? COLUMNS = VISION_COLUMNS : COLUMNS = TEXT_COLUMNS
-    const columns = useMemo(() => datasetType === COLUMNS , [])
+    const columns = useMemo(() => COLUMNS , [])
 
     const data = useMemo(()=> data_ , [data_])
 
@@ -83,7 +83,7 @@ export const ContributionTable = ({data_ , datasetType}) => {
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {
                             headerGroup.headers.map(column =>(
-                                <th {...column.getHeaderProps()} style= {{maxWidth: column.maxWidth , maxHeight : column.maxHeight, minWidth : column.minWidth}}>{column.render('Header')}</th>
+                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
                             ))
                         }
                     </tr>
@@ -97,7 +97,7 @@ export const ContributionTable = ({data_ , datasetType}) => {
                         <tr {...row.getRowProps()}>
                         {
                             row.cells.map((cell) =>{
-                                return  <td {...cell.getCellProps()} style= {{maxWidth: cell.column.maxWidth , maxHeight : cell.column.maxWidth, minWidth : cell.column.minWidth}} >{cell.render('Cell')}</td>
+                                return  <td {...cell.getCellProps()} >{cell.render('Cell')}</td>
                             })
                         }
                         </tr>

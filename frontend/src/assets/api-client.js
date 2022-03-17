@@ -77,11 +77,12 @@ export const getModelName = () =>{
 
 export const startRunModel = (datasetName , modelName , numOfEpochs , learningRate , learningRateSchedulerName , optimizer , useHydra , trackingPercentage) =>{
 
-  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs + "&learningRate=" + learningRate + "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra 
-  if(learningRate){
+  let url  = URI + "/startRunModel?datasetName=" + datasetName + "&modelName=" + modelName + "&numOfEpochs=" + numOfEpochs +  "&learningRateSchedulerName=" + learningRateSchedulerName + "&optimizer=" + optimizer + "&useHydra=" + useHydra 
+  
+  if(learningRate & learningRate !== ""){
     url  += "&learningRate=" + learningRate
   }
-  if(trackingPercentage){
+  if(trackingPercentage && trackingPercentage!== ""){
     url += "&trackingPercentage=" + trackingPercentage
   }
   

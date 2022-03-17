@@ -43,7 +43,7 @@ class ResultDisplay extends Component {
            content =  
            <Card bg="light">
             <Card.Body>
-           <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData}/>
+           <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} useHydra = {this.state.isHYDRA}/>
            </Card.Body>
             </Card>
         }else{
@@ -55,7 +55,7 @@ class ResultDisplay extends Component {
         <Tabs activeKey={this.state.key} onSelect={this.handleSelect} 
        id="controlled-tab-example">
               <Tab eventKey={1} title="Model Result">
-              <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} />
+              <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} useHydra = {this.state.isHYDRA}/>
             
               </Tab>
               <Tab eventKey={2} title="Contribution Result">

@@ -39,6 +39,7 @@ class ModelGraphsDisplay extends Component {
             accCheckBox :true,
             lossCheckBox : true,
             learningRateCheckBox : true,
+
         }     
     }
   
@@ -117,10 +118,11 @@ class ModelGraphsDisplay extends Component {
                         if(data.flag === true){
                           this.setState({displayedSpinner : false})
                             clearInterval(this.state.intervalId)
+                            if(this.props.useHydra){
                             getContributionResult(this.state.modelId).then((data) =>{
                               this.props.passContributionData(data.contribution)
                             })
-                            
+                          }
 
 
                     }
