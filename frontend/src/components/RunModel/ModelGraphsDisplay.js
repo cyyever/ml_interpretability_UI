@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Spinner, Form} from 'react-bootstrap';
+import {Spinner, Form, Alert} from 'react-bootstrap';
 import {getModelResult , getContributionResult} from '../../assets/api-client'
 import {
     Chart as ChartJS,
@@ -45,9 +45,10 @@ class ModelGraphsDisplay extends Component {
   
     componentDidMount(){
         if(this.props.modelId !== undefined && this.props.modelId !== ""){
-        this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , displayedSpinner : true} , ()=>{
+        this.setState({modelId : this.props.modelId , numOfEpochs : this.props.numOfEpochs , displayedSpinner : true , errorMessage : ""} , ()=>{
           var id = setInterval(() => {
                 getModelResult(this.state.modelId , this.state.intervalId).then((data) =>{
+                 
                     this.setState({data : data.result} , () =>{
                         let valid_acc = []
                         let train_acc = []
@@ -55,7 +56,7 @@ class ModelGraphsDisplay extends Component {
                         let train_loss = []
                         let learning_rates = []
                         let labels = []
-                        if (data.result !== []){
+                        if (data.result && data.result !== []){
                         data.result.forEach((result) => {
                             valid_acc.push(result.validation_acc)
                             train_acc.push(result.training_acc)
@@ -115,18 +116,26 @@ class ModelGraphsDisplay extends Component {
                                             
                         this.setState({acc_result: data_ , loss_result : data__ , learning_result : data___})
                     }     
-                        if(data.flag === true){
+                    
+                        if(data.flag === 0){
                           this.setState({displayedSpinner : false})
                             clearInterval(this.state.intervalId)
                             if(this.props.useHydra){
                             getContributionResult(this.state.modelId).then((data) =>{
                               this.props.passContributionData(data.contribution)
                             })
+                          }else if(data.flag === -1){
+                            clearInterval(this.state.intervalId)
+                            this.setState({displayedSpinner :false})
+                            this.props.addErrorMessage('error occured while training the model')
+                            
+                            
                           }
 
 
                     }
                 })
+              
                 })
             } , 10000)
             this.setState({intervalId : id})
@@ -224,7 +233,6 @@ class ModelGraphsDisplay extends Component {
                 <Line data = {this.state.learning_result} options = {options_learningRate}/> 
                </div> : ""}
         
-
             </div>
         </>
 

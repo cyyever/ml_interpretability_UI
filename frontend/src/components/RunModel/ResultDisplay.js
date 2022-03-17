@@ -43,7 +43,7 @@ class ResultDisplay extends Component {
            content =  
            <Card bg="light">
             <Card.Body>
-           <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} useHydra = {this.state.isHYDRA}/>
+           <ModelGraphsDisplay key = {this.state.modelId}  modelId = {this.state.modelId} numOfEpochs = {this.state.numOfEpochs}  passContributionData = {this.handleContributionData} useHydra = {this.state.isHYDRA} addErrorMessage = {this.props.addErrorMessage}/>
            </Card.Body>
             </Card>
         }else{
