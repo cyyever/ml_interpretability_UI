@@ -152,7 +152,7 @@ def get_training_info(task_id: int) -> tuple | None:
                 )
             if queue.has_result(queue_name="worker_state"):
                 res = queue.get_result(queue_name="worker_state")
-                get_logger().error("release queue %s", res)
+                get_logger().info("release queue,result is %s", res)
                 queue.release()
                 del __training_queues[task_id]
                 if res:
