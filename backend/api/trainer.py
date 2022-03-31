@@ -42,13 +42,16 @@ def __train_impl(task, extra_arguments):
         lr = trainer.hyper_parameter.get_learning_rate(trainer)
         config.hyper_parameter_config.learning_rate = lr
         config.hyper_parameter_config.find_learning_rate = False
-        trainer = config.create_trainer()
+        if use_hydra:
+            trainer = config.create_deterministic_trainer()
+        else:
+            trainer = config.create_trainer()
 
         get_logger().info("begin train")
 
         if use_hydra:
             trainer.train()
-            trainer, hook, _ = config.create_trainer_and_hook()
+            trainer, hook, _ = config.recreate_trainer_and_hook()
             trainer.append_named_hook(
                 ModelExecutorHookPoint.AFTER_VALIDATION,
                 "gather_info",
@@ -94,9 +97,9 @@ def training(
     epoch: int,
     learning_rate: float,
     use_hydra: bool,
-    lr_scheduler_name=None,
-    optimizer_name=None,
-    tracking_percentage=None,
+    lr_scheduler_name: str = None,
+    optimizer_name: str = None,
+    tracking_percentage: float = None,
 ) -> int:
     """Start a new training job and return the task id."""
     global __next_task_id
@@ -134,7 +137,7 @@ def training(
         return task_id
 
 
-def get_training_info(task_id: int) -> tuple | None:
+def get_training_info(task_id: int) -> tuple:
     """Give task_id, return the loss & acc of model, contribution and a flag indicating the training has finished"""
     with __task_lock:
         if task_id in __training_result:
@@ -163,7 +166,8 @@ def get_training_info(task_id: int) -> tuple | None:
             else:
                 result_flag = 1
         if task_id not in __training_info:
-            return None
+            get_logger().error("can't find task %s", task_id)
+            return (None, None, -1)
         return (
             __training_info.get(task_id, None),
             __contribution.get(task_id, None),
@@ -179,13 +183,12 @@ def remove_training_task(task_id):
 
 if __name__ == "__main__":
     task_id = training(
-        "MNIST", "lenet5", 1, 0.1, use_hydra=True, tracking_percentage=0.000001
+        "MNIST", "lenet5", 2, 0.1, use_hydra=True, tracking_percentage=0.000001
     )
     while True:
         time.sleep(1)
         info, contribution, flag = get_training_info(task_id)
         if flag == 0:
-            print(contribution)
             break
         if flag == -1:
             break
