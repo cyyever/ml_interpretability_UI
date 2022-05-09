@@ -1,6 +1,8 @@
 import typing
 
-from cyy_torch_toolbox.dataset_collection import DatasetCollection
+from cyy_torch_toolbox.dataset_collection import (
+    ClassificationDatasetCollection, DatasetCollection,
+    create_dataset_collection)
 from cyy_torch_toolbox.dataset_repository import get_dataset_constructors
 from cyy_torch_toolbox.ml_type import DatasetType, MachineLearningPhase
 
@@ -12,7 +14,7 @@ class Dataset:
     def get_supported_dataset_names(cls) -> dict:
         dataset_names = {}
         for dataset_type in (DatasetType.Vision, DatasetType.Text):
-            dataset_names[str(dataset_type).lower().replace(".","_")] = list(
+            dataset_names[str(dataset_type).lower().replace(".", "_")] = list(
                 sorted(
                     get_dataset_constructors(dataset_type=dataset_type).keys(),
                     key=str.casefold,
@@ -23,17 +25,18 @@ class Dataset:
     @classmethod
     def get_dataset_collection(cls, name: str) -> DatasetCollection:
         if name not in cls.dataset_collections:
-            cls.dataset_collections[name] = DatasetCollection.get_by_name(name)
+            cls.dataset_collections[name] = create_dataset_collection(
+                ClassificationDatasetCollection, name
+            )
         return cls.dataset_collections[name]
 
     @classmethod
     def get_label_indices(cls, name: str, phase: MachineLearningPhase) -> dict:
-        labels = (
+        return (
             cls.get_dataset_collection(name)
             .get_dataset_util(phase=phase)
-            .split_by_label()
+            .label_sample_dict
         )
-        return {k: v["indices"] for k, v in labels.items()}
 
     @classmethod
     def get_label_names(cls, name: str) -> dict:

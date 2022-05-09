@@ -1,6 +1,5 @@
 import threading
 import time
-import traceback
 
 from cyy_naive_lib.log import get_logger
 from cyy_private_torch_algorithm.lean_hydra.lean_hydra_config import \
@@ -35,48 +34,46 @@ def __train_impl(task, extra_arguments):
             queue_name="info",
         )
 
-    try:
-        trainer = config.create_trainer()
-        lr = trainer.hyper_parameter.get_learning_rate(trainer)
-        config.hyper_parameter_config.learning_rate = lr
-        config.hyper_parameter_config.find_learning_rate = False
+    if use_hydra:
+        config.make_reproducible_env = True
+    trainer = config.create_trainer()
+    lr = trainer.hyper_parameter.get_learning_rate(trainer)
+    config.hyper_parameter_config.learning_rate = lr
+    config.hyper_parameter_config.find_learning_rate = False
+    trainer = config.create_trainer()
 
-        get_logger().info("begin train")
+    get_logger().info("begin train")
 
-        if use_hydra:
-            trainer = config.create_deterministic_trainer()
-            trainer.train()
-            trainer, hook, _ = config.recreate_trainer_and_hook()
-            trainer.append_named_hook(
-                ModelExecutorHookPoint.AFTER_VALIDATION,
-                "gather_info",
-                after_validation_hook,
-                stripable=True,
-            )
-            trainer.train()
-            queue.put_result(
-                {"contribution": hook.contributions.cpu().tolist()},
-                queue_name="contribution",
-            )
-        else:
-            trainer = config.create_trainer()
-            trainer.append_named_hook(
-                ModelExecutorHookPoint.AFTER_VALIDATION,
-                "gather_info",
-                after_validation_hook,
-                stripable=True,
-            )
-            trainer.train()
-
-        get_logger().info("stop trainer")
-    except Exception as e:
-        get_logger().error("catch exception:%s", e)
-        get_logger().error("traceback:%s", traceback.format_exc())
-        queue.put_result(
-            False,
-            queue_name="worker_state",
+    if use_hydra:
+        trainer.train()
+        trainer, hook, _ = config.create_trainer_and_hook()
+        trainer.append_named_hook(
+            ModelExecutorHookPoint.AFTER_VALIDATION,
+            "gather_info",
+            after_validation_hook,
+            stripable=True,
         )
-    queue.put_result(True, queue_name="worker_state")
+        trainer.train()
+        training_loss = {
+            epoch: trainer.performance_metric.get_loss(epoch).cpu()
+            for epoch in range(1, trainer.hyper_parameter.epoch + 1)
+        }
+
+        queue.put_result(
+            {"contribution": hook.contributions.cpu().tolist()},
+            queue_name="contribution",
+        )
+    else:
+        trainer.append_named_hook(
+            ModelExecutorHookPoint.AFTER_VALIDATION,
+            "gather_info",
+            after_validation_hook,
+            stripable=True,
+        )
+        trainer.train()
+
+    get_logger().info("stop trainer")
+    return True
 
 
 __task_lock = threading.RLock()
@@ -84,7 +81,6 @@ __next_task_id = 0
 __training_queues: dict = {}
 __training_info: dict = {}
 __contribution: dict = {}
-__training_result: dict = {}
 
 
 def training(
@@ -93,9 +89,9 @@ def training(
     epoch: int,
     learning_rate: float,
     use_hydra: bool,
-    lr_scheduler_name: str = None,
-    optimizer_name: str = None,
-    tracking_percentage: float = None,
+    lr_scheduler_name=None,
+    optimizer_name=None,
+    tracking_percentage=None,
 ) -> int:
     """Start a new training job and return the task id."""
     global __next_task_id
@@ -104,6 +100,7 @@ def training(
     else:
         config = DefaultConfig(dataset_name=dataset_name, model_name=model_name)
 
+    config.debug = True
     if epoch is not None:
         config.hyper_parameter_config.epoch = epoch
     if learning_rate is not None:
@@ -121,7 +118,6 @@ def training(
     queue = TorchProcessTaskQueue(worker_num=1, use_manager=True, move_data_in_cpu=True)
     queue.add_result_queue(name="info")
     queue.add_result_queue(name="contribution")
-    queue.add_result_queue(name="worker_state")
     queue.set_worker_fun(__train_impl)
     queue.add_task((config, use_hydra))
     with __task_lock:
@@ -136,12 +132,10 @@ def training(
 def get_training_info(task_id: int) -> tuple:
     """Give task_id, return the loss & acc of model, contribution and a flag indicating the training has finished"""
     with __task_lock:
-        if task_id in __training_result:
-            if __training_result[task_id] < 0:
-                return (None, None, -1)
         queue = __training_queues.get(task_id, None)
-        result_flag = 0
+        finish_flag = True
         if queue is not None:
+            finish_flag = False
             while queue.has_result(queue_name="info"):
                 epoch_info = queue.get_result(queue_name="info")
                 __training_info[task_id].append(epoch_info)
@@ -149,25 +143,14 @@ def get_training_info(task_id: int) -> tuple:
                 __contribution[task_id].append(
                     queue.get_result(queue_name="contribution")
                 )
-            if queue.has_result(queue_name="worker_state"):
-                res = queue.get_result(queue_name="worker_state")
-                get_logger().info("release queue,result is %s", res)
+            if queue.has_result():
                 queue.release()
                 del __training_queues[task_id]
-                if res:
-                    result_flag = 0
-                else:
-                    result_flag = -1
-                __training_result[task_id] = result_flag
-            else:
-                result_flag = 1
-        if task_id not in __training_info:
-            get_logger().error("can't find task %s", task_id)
-            return (None, None, -1)
+                finish_flag = True
         return (
-            __training_info.get(task_id, None),
+            __training_info[task_id],
             __contribution.get(task_id, None),
-            result_flag,
+            finish_flag,
         )
 
 
@@ -179,12 +162,17 @@ def remove_training_task(task_id):
 
 if __name__ == "__main__":
     task_id = training(
-        "MNIST", "lenet5", 2, 0.1, use_hydra=True, tracking_percentage=0.000001
+        # "MNIST", "lenet5", 2, 0.1, use_hydra=True, tracking_percentage=0.000001
+        "IMDB",
+        "simplelstm",
+        2,
+        0.1,
+        use_hydra=True,
+        tracking_percentage=0.000001,
     )
     while True:
-        time.sleep(1)
+        time.sleep(100)
         info, contribution, flag = get_training_info(task_id)
-        if flag == 0:
-            break
-        if flag == -1:
+        print(contribution)
+        if flag:
             break
