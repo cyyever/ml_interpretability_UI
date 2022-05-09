@@ -36,6 +36,9 @@ def __train_impl(task, extra_arguments):
         )
 
     try:
+        if use_hydra:
+            config.make_reproducible_env = True
+            config.apply_global_config()
         trainer = config.create_trainer()
         lr = trainer.hyper_parameter.get_learning_rate(trainer)
         config.hyper_parameter_config.learning_rate = lr
@@ -179,7 +182,12 @@ def remove_training_task(task_id):
 
 if __name__ == "__main__":
     task_id = training(
-        "MNIST", "lenet5", 2, 0.1, use_hydra=True, tracking_percentage=0.000001
+        "MNIST",
+        "lenet5",
+        2,
+        learning_rate=None,
+        use_hydra=True,
+        tracking_percentage=0.000001,
     )
     while True:
         time.sleep(1)
