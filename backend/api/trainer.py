@@ -27,10 +27,10 @@ def __train_impl(task, extra_arguments):
             {
                 "epoch": epoch,
                 "learning_rate": trainer.get_data("cur_learning_rates")[0],
-                "training_loss": training_metric.get_loss(epoch),
-                "validation_loss": inference_metric.get_loss(epoch),
-                "training_acc": training_metric.get_accuracy(epoch),
-                "validation_acc": inference_metric.get_accuracy(epoch),
+                "training_loss": training_metric.get_loss(epoch).item(),
+                "validation_loss": inference_metric.get_loss(epoch).item(),
+                "training_acc": training_metric.get_accuracy(epoch).item(),
+                "validation_acc": inference_metric.get_accuracy(epoch).item(),
             },
             queue_name="info",
         )
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     task_id = training(
         "MNIST",
         "lenet5",
-        2,
+        1,
         learning_rate=None,
         use_hydra=True,
         tracking_percentage=0.000001,
