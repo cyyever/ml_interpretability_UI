@@ -40,6 +40,7 @@ def __train_impl(task, extra_arguments):
             config.make_reproducible_env = True
             config.apply_global_config()
         trainer = config.create_trainer()
+        trainer.visualizer.disable()
         lr = trainer.hyper_parameter.get_learning_rate(trainer)
         config.hyper_parameter_config.learning_rate = lr
         config.hyper_parameter_config.find_learning_rate = False
@@ -48,6 +49,7 @@ def __train_impl(task, extra_arguments):
 
         if use_hydra:
             trainer = config.create_deterministic_trainer()
+            trainer.visualizer.disable()
             trainer.train()
             trainer, hook, _ = config.recreate_trainer_and_hook()
             trainer.append_named_hook(
@@ -63,6 +65,7 @@ def __train_impl(task, extra_arguments):
             )
         else:
             trainer = config.create_trainer()
+            trainer.visualizer.disable()
             trainer.append_named_hook(
                 ModelExecutorHookPoint.AFTER_VALIDATION,
                 "gather_info",
@@ -112,6 +115,8 @@ def training(
     if learning_rate is not None:
         config.hyper_parameter_config.learning_rate = learning_rate
         config.hyper_parameter_config.find_learning_rate = False
+    #todo reduce gpu usage
+    config.hyper_parameter_config.batch_size = 8
     if lr_scheduler_name is not None:
         config.hyper_parameter_config.learning_rate_scheduler = lr_scheduler_name
     if optimizer_name is not None and not use_hydra:
