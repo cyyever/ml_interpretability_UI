@@ -115,7 +115,6 @@ def training(
     if learning_rate is not None:
         config.hyper_parameter_config.learning_rate = learning_rate
         config.hyper_parameter_config.find_learning_rate = False
-    #todo reduce gpu usage
     config.hyper_parameter_config.batch_size = 8
     if lr_scheduler_name is not None:
         config.hyper_parameter_config.learning_rate_scheduler = lr_scheduler_name
@@ -190,7 +189,7 @@ if __name__ == "__main__":
         "MNIST",
         "lenet5",
         1,
-        learning_rate=None,
+        learning_rate=0.1,
         use_hydra=True,
         tracking_percentage=0.000001,
     )
