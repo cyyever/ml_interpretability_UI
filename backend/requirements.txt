@@ -1,3 +1,5 @@
+torch
+functorch
 cyy-naive-lib @ git+https://github.com/cyyever/naive_python_lib.git@main
 cyy-torch-algorithm @ git+https://github.com/cyyever/torch_algorithm.git@main
 cyy-torch-toolbox @ git+https://github.com/cyyever/torch_toolbox.git@main
