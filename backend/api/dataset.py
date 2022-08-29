@@ -58,6 +58,8 @@ class Dataset:
 # """ test driver"""
 
 if __name__ == "__main__":
+    result = Dataset.get_supported_dataset_names()
+    print(result)
     labels = Dataset.get_label_indices("MNIST", MachineLearningPhase.Training)
     print(labels.keys())
     indexes = labels.get(9)
