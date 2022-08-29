@@ -3,8 +3,7 @@ import time
 import traceback
 
 from cyy_naive_lib.log import get_logger
-from cyy_private_torch_algorithm.lean_hydra.lean_hydra_config import \
-    LeanHyDRAConfig
+from cyy_torch_algorithm.lean_hydra.lean_hydra_config import LeanHyDRAConfig
 from cyy_torch_toolbox.data_structure.torch_process_task_queue import \
     TorchProcessTaskQueue
 from cyy_torch_toolbox.default_config import DefaultConfig
