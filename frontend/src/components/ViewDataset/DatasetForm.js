@@ -60,11 +60,11 @@ class DatasetForm extends Component {
         labels: [],
         selectedDatasetLabel: "default",
         displayedSpinner: true,
-        datasetType: data.split("_")[1],
+        datasetType: data.split("_").slice(-1)[0],
       },
       () => {
         getDatasetLabel(
-          this.state.selectedDataset.split("_").slice(0, -1).join('_'),
+          this.state.selectedDataset.split("_").slice(0, -1).join("_"),
           this.state.selectedDatasetSplit
         ).then((data) => {
           this.setState({
@@ -85,7 +85,7 @@ class DatasetForm extends Component {
           this.state.selectedDatasetLabel !== "default"
         ) {
           getLabelIndices(
-            this.state.selectedDataset.split("_").slice(0, -1).join('_'),
+            this.state.selectedDataset.split("_").slice(0, -1).join("_"),
             this.state.selectedDatasetSplit,
             this.state.selectedDatasetLabel
           ).then((data_) => {
@@ -102,7 +102,7 @@ class DatasetForm extends Component {
       () => {
         if (this.state.selectedDatasetLabel !== "default") {
           getLabelIndices(
-            this.state.selectedDataset.split("_").slice(0, -1).join('_'),
+            this.state.selectedDataset.split("_").slice(0, -1).join("_"),
             this.state.selectedDatasetSplit,
             this.state.selectedDatasetLabel
           ).then((data_) => {
@@ -218,9 +218,12 @@ class DatasetForm extends Component {
         <DataPagination
           key={this.state.data}
           data={this.state.data}
-          datasetName={this.state.selectedDataset.split("_").slice(0, -1).join('_')}
+          datasetName={this.state.selectedDataset
+            .split("_")
+            .slice(0, -1)
+            .join("_")}
           datasetSplit={this.state.selectedDatasetSplit}
-          datasetType={this.state.selectedDataset.split("_")[-1]}
+          datasetType={this.state.selectedDataset.split("_").slice(-1)[0]}
           displaySpinner={(e) => {
             this.setState({ displayedSpinner: e });
           }}
