@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import {
   getDatasetName,
   getDatasetLabel,
-  getLabelIndices
+  getLabelIndices,
 } from "../../assets/api-client.js";
-import { Card , Spinner } from "react-bootstrap";
+import { Card, Spinner } from "react-bootstrap";
 import DataPagination from "./DataPagination.js";
 const datasetSplit = [
   {
@@ -31,8 +31,8 @@ class DatasetForm extends Component {
       selectedDatasetSplit: datasetSplit[0].value,
       selectedDatasetLabel: "default",
       data: [],
-      displayedSpinner : false,
-      datasetType :"",
+      displayedSpinner: false,
+      datasetType: "",
     };
   }
 
@@ -54,49 +54,64 @@ class DatasetForm extends Component {
   handleDatasetInput = (event) => {
     var data = event.target.value;
     this.setState(
-      { data : [] ,selectedDataset: data, labels: [], selectedDatasetLabel: "default" , displayedSpinner : true , datasetType : data.split("_")[1]},
+      {
+        data: [],
+        selectedDataset: data,
+        labels: [],
+        selectedDatasetLabel: "default",
+        displayedSpinner: true,
+        datasetType: data.split("_")[1],
+      },
       () => {
         getDatasetLabel(
-          this.state.selectedDataset.split("_")[0],
+          this.state.selectedDataset.split("_").slice(0, -1).join('_'),
           this.state.selectedDatasetSplit
         ).then((data) => {
-          this.setState({ labels: data.datasetLabelName  , displayedSpinner : false});
+          this.setState({
+            labels: data.datasetLabelName,
+            displayedSpinner: false,
+          });
         });
       }
     );
   };
 
   handleDatasetSplitInput = (event) => {
-    this.setState({ selectedDatasetSplit: event.target.value , displayedSpinner : true}, () => {
-      if (this.state.selectedDataset !== "default"  && this.state.selectedDatasetLabel !=="default") {
-        getLabelIndices(
-          this.state.selectedDataset.split("_")[0],
-          this.state.selectedDatasetSplit,
-          this.state.selectedDatasetLabel
-        ).then((data_) => {
-          this.setState({ data: data_.indices  , displayedSpinner : false});
-        });
-      }
-    });
-  };
-
-  handleDatasetLabel = (event) => {
     this.setState(
-      { selectedDatasetLabel: event.target.value, displayedSpinner : true },
+      { selectedDatasetSplit: event.target.value, displayedSpinner: true },
       () => {
-        if (this.state.selectedDatasetLabel !== "default") {
+        if (
+          this.state.selectedDataset !== "default" &&
+          this.state.selectedDatasetLabel !== "default"
+        ) {
           getLabelIndices(
-            this.state.selectedDataset.split("_")[0],
+            this.state.selectedDataset.split("_").slice(0, -1).join('_'),
             this.state.selectedDatasetSplit,
             this.state.selectedDatasetLabel
           ).then((data_) => {
-            this.setState({ data: data_.indices ,displayedSpinner : false});
+            this.setState({ data: data_.indices, displayedSpinner: false });
           });
         }
       }
     );
   };
 
+  handleDatasetLabel = (event) => {
+    this.setState(
+      { selectedDatasetLabel: event.target.value, displayedSpinner: true },
+      () => {
+        if (this.state.selectedDatasetLabel !== "default") {
+          getLabelIndices(
+            this.state.selectedDataset.split("_").slice(0, -1).join('_'),
+            this.state.selectedDatasetSplit,
+            this.state.selectedDatasetLabel
+          ).then((data_) => {
+            this.setState({ data: data_.indices, displayedSpinner: false });
+          });
+        }
+      }
+    );
+  };
 
   render() {
     return (
@@ -118,21 +133,35 @@ class DatasetForm extends Component {
                       <option value="default" hidden disabled>
                         Select dataset name
                       </option>
-                     
-                      <optgroup label = "Vision Dataset">
-                      {this.state.datasets.datasettype_vision !== undefined ? this.state.datasets.datasettype_vision.map((dataset) => (
-                        <option key={dataset} value={dataset+"_" + "vision"}>
-                          {dataset}
-                        </option>
-                      )) : "" }
+
+                      <optgroup label="Vision Dataset">
+                        {this.state.datasets.datasettype_vision !== undefined
+                          ? this.state.datasets.datasettype_vision.map(
+                              (dataset) => (
+                                <option
+                                  key={dataset}
+                                  value={dataset + "_" + "vision"}
+                                >
+                                  {dataset}
+                                </option>
+                              )
+                            )
+                          : ""}
                       </optgroup>
 
-                      <optgroup label = "Text Dataset">
-                      {this.state.datasets.datasettype_text !== undefined ? this.state.datasets.datasettype_text.map((dataset) => (
-                        <option key={dataset} value={dataset + "_" + "text"}>
-                          {dataset}
-                        </option>
-                      )) : ""}
+                      <optgroup label="Text Dataset">
+                        {this.state.datasets.datasettype_text !== undefined
+                          ? this.state.datasets.datasettype_text.map(
+                              (dataset) => (
+                                <option
+                                  key={dataset}
+                                  value={dataset + "_" + "text"}
+                                >
+                                  {dataset}
+                                </option>
+                              )
+                            )
+                          : ""}
                       </optgroup>
                     </select>
                   </div>
@@ -173,16 +202,29 @@ class DatasetForm extends Component {
                       ))}
                     </select>
                   </div>
-                  {this.state.displayedSpinner ?  
-                  <div className="col form-spinner"><Spinner animation="border" /></div> : ""}
-                 
+                  {this.state.displayedSpinner ? (
+                    <div className="col form-spinner">
+                      <Spinner animation="border" />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </form>
             </Card.Body>
           </Card>
         </div>
-    
-        <DataPagination key={this.state.data} data = {this.state.data} datasetName = {this.state.selectedDataset.split("_")[0]} datasetSplit = {this.state.selectedDatasetSplit} datasetType = {this.state.selectedDataset.split("_")[1]} displaySpinner = {(e) => {this.setState({displayedSpinner : e})}}/>
+
+        <DataPagination
+          key={this.state.data}
+          data={this.state.data}
+          datasetName={this.state.selectedDataset.split("_").slice(0, -1).join('_')}
+          datasetSplit={this.state.selectedDatasetSplit}
+          datasetType={this.state.selectedDataset.split("_")[-1]}
+          displaySpinner={(e) => {
+            this.setState({ displayedSpinner: e });
+          }}
+        />
       </>
     );
   }
