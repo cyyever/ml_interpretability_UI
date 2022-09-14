@@ -28,7 +28,7 @@ export const getDatasetLabel = (datasetName, datasetSplit) => {
       return reponse.data;
     })
     .catch((error) => {
-      console.log("failed to get dataset Label");
+      //console.log("failed to get dataset Label");
       throw error;
     });
 };
