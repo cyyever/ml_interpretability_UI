@@ -49,7 +49,7 @@ class RawDataView(APIView):
         indices = indices.split(",")
         return_data = []
         labels = Dataset.get_label_names(datasetName)
-        if(datasetType == 'vision'):
+        if datasetType == "vision":
             buffered = BytesIO()
             for index in indices:
                 data = Dataset.get_raw_data_from_dataset(
@@ -62,12 +62,12 @@ class RawDataView(APIView):
                 return_data.append(
                     {"data": img_str.decode("UTF-8"), "label": labels[data[1]]}
                 )
-        elif(datasetType == 'text'):
+        elif datasetType == "text":
             for index in indices:
                 data = Dataset.get_raw_data_from_dataset(
                     datasetName, int(datasetSplit), int(index)
                 )
-                return_data.append({"data":data[0] , "label" : labels[data[1]]})
+                return_data.append({"data": data[0], "label": labels[data[1]]})
         return Response(return_data)
 
 
@@ -98,7 +98,7 @@ class startRunModelView(APIView):
             use_hydra,
             lr_scheduler_name,
             optimizer,
-            tracking_percentage
+            tracking_percentage,
         )
         return Response({"modelId": id})
 
