@@ -38,18 +38,14 @@ class DatasetForm extends Component {
     };
   }
 
-  /*  
- handleInput = (e) => {
-     this.setState({[e.target.name]: e.target.value} , () =>{
-         alert(this.state.selectedDataset)
-     })
- 
- }
- */
-
   componentDidMount() {
+    const storeData = JSON.parse(localStorage.getItem('data'));
+    if (storeData) {
+      this.setState({ datasets: storeData });
+    }
     getDatasetName().then((data) => {
       this.setState({ datasets: data.datasetName });
+      localStorage.setItem('data', JSON.stringify(data.datasetName));
     }).catch((error) => {
       toast.error(error.toString(), {
         position: "top-right",

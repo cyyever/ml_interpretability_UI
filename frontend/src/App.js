@@ -14,11 +14,11 @@ function App() {
 
   return (
     <div className="App">
-    <Navbar bg="light" fixed="top">
+    <Navbar bg="light" fixed="top" style={{zIndex: '1000'}}>
        <div className = "container-fluid">
-    <Navbar.Brand>Deep Learning Demo</Navbar.Brand>
-    </div>
-  </Navbar>
+        <Navbar.Brand>Deep Learning Demo</Navbar.Brand>
+      </div>
+    </Navbar>
     
   <ToastContainer
       position="top-right"

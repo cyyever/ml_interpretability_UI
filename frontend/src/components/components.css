@@ -144,3 +144,50 @@
     background-color: #2F4050;
     color: white;
   }
+
+  .modal-outside {
+    position: fixed;
+    width: 500px;
+    height: 100px;
+    bottom: 10%;
+    left: 40%;
+  }
+
+  .slider-limit {
+    justify-content: center;
+    align-content: center;
+    width: 300px;
+    margin-top: 75px;
+  }
+
+  .img-transition {
+    -webkit-transition: -webkit-transform 0.4s;
+    transition: transform 0.4s;
+  }
+
+  .img-page-center {
+    width: 90%;
+    height: 90%;  
+  }
+
+  .inner-card {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    left: 30%;
+    height: 110%;
+    width: 40%;
+  }
+
+  .img-bot-space {
+    margin-bottom: 20px;
+  }
+
+  .img-card-spacing {
+    margin-bottom: 25px;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    z-index: 9999;
+  }
