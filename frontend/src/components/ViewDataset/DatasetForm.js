@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component } from "react";
 import {
   getDatasetName,
   getDatasetLabel,
@@ -47,7 +47,7 @@ class DatasetForm extends Component {
       this.setState({ datasets: data.datasetName });
       localStorage.setItem('data', JSON.stringify(data.datasetName));
     }).catch((error) => {
-      toast.error(error.toString(), {
+      toast.error("Error getting dataset names, " + error.toString(), {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -86,7 +86,7 @@ class DatasetForm extends Component {
             displayedSpinner: false,
           });
         }).catch((error) => {
-          toast.error(error.toString(), {
+          toast.error("Error getting dataset label, " + error.toString(), {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -166,7 +166,7 @@ class DatasetForm extends Component {
                               (dataset) => (
                                 <option
                                   key={dataset}
-                                  value={dataset + "_" + "vision"}
+                                  value={dataset + "_vision"}
                                 >
                                   {dataset}
                                 </option>
@@ -181,7 +181,7 @@ class DatasetForm extends Component {
                               (dataset) => (
                                 <option
                                   key={dataset}
-                                  value={dataset + "_" + "text"}
+                                  value={dataset + "_text"}
                                 >
                                   {dataset}
                                 </option>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {getDatasetName ,  getModelName , startRunModel , getLearningRateScheduler , getOptimizers} from "../../assets/api-client.js";
 import { Card , Form  , Alert, InputGroup} from "react-bootstrap";
+import { toast } from 'react-toastify';
 import ResultDisplay from "./ResultDisplay.js";
 
 const optimizersForHYDRA = ["SGD"]
@@ -28,21 +29,66 @@ class RunModelForm extends Component {
 
 
   componentDidMount() {
+    const storeData = JSON.parse(localStorage.getItem('data'));
+    if (storeData) {
+      this.setState({ datasets: storeData });
+    }
     getDatasetName().then((data) => {
       this.setState({ datasets: data.datasetName });
+      localStorage.setItem('data', JSON.stringify(data.datasetName));
+    }).catch((error) => {
+      toast.error("Dataset name error: " + error.toString(), {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     });
 
     getModelName().then((data) =>{
       this.setState({models : data.modelName})
-    })
+    }).catch((error) => {
+      toast.error("Error getting models, " + error.toString(), {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    });
 
     getLearningRateScheduler().then((data) => {
       this.setState({learningRateSchedulers : data.learning_rate_schedulers , selectedLearningRateScheduler : data.learning_rate_schedulers[0]})
-    })
+    }).catch((error) => {
+      toast.error(error.toString(), {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    });
 
     getOptimizers().then((data) =>{
       this.setState({optimizers : data.optimizers , selectedOptimizers : data.optimizers[0]})
-    })
+    }).catch((error) => {
+      toast.error(error.toString(), {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    });
   }
 
   handleDatasetInput = (event) => {
@@ -169,7 +215,7 @@ class RunModelForm extends Component {
                      
                       <optgroup label = "Vision Dataset">
                       {this.state.datasets.datasettype_vision !== undefined ? this.state.datasets.datasettype_vision.map((dataset) => (
-                        <option key={dataset} value={dataset+"_" + "vision"}>
+                        <option key={dataset} value={dataset+"_vision"}>
                           {dataset}
                         </option>
                       )) : "" }
@@ -177,7 +223,7 @@ class RunModelForm extends Component {
 
                       <optgroup label = "Text Dataset">
                       {this.state.datasets.datasettype_text !== undefined ? this.state.datasets.datasettype_text.map((dataset) => (
-                        <option key={dataset} value={dataset + "_" + "text"}>
+                        <option key={dataset} value={dataset + "_text"}>
                           {dataset}
                         </option>
                       )) : ""}

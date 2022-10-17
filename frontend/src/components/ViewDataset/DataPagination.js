@@ -184,7 +184,7 @@ class DataPagination extends Component {
           className="col-lg-2 col-md-3 col-sm-6 py-2 img-card-spacing"
           key={key}
         >
-          <Card bg="secondary" className="inner-card">
+          <Card bg="light" className="inner-card">
             <img
               key={key}
               className="img-with-click img-page-center"
@@ -203,7 +203,7 @@ class DataPagination extends Component {
           className="col-lg-4 col-md-4 col-sm-4 py-2 img-card-spacing"
           key={key}
         >
-          <Card bg="secondary" className="inner-card">
+          <Card bg="light" className="inner-card">
             <img
               key={key}
               className="img-with-click img-page-center"
@@ -222,7 +222,7 @@ class DataPagination extends Component {
           className="col-lg-6 col-md-6 col-sm-12 py-2 img-card-spacing"
           key={key}
         >
-          <Card bg="secondary" className="inner-card">
+          <Card bg="light" className="inner-card">
             <img
               key={key}
               className="img-with-click img-page-center"
